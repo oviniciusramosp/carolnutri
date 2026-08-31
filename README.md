@@ -46,17 +46,41 @@ npm run preview      # serve o dist localmente
 
 Pela raiz do repo: `npm run www:dev` / `www:build` / `www:preview`.
 
-## GitHub Pages
+## GitHub Pages + domínio
 
-O workflow [`.github/workflows/deploy-www.yml`](../../.github/workflows/deploy-www.yml)
-builda **só** `apps/www` quando há push em `main` nesse caminho.
+Produção: https://nutricarolagostini.com
 
-O site público vive num repo separado, `oviniciusramosp/carolnutri`, para o
-dashboard (dados de saúde) não ir para um repositório público. Preview:
-https://oviniciusramosp.github.io/carolnutri/
+O workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publica
+em todo push em `main`. `site` e `base` em `astro.config.mjs` apontam para o
+domínio próprio (`/` no apex). O preview antigo
+`https://oviniciusramosp.github.io/carolnutri/` redireciona para o domínio
+depois que o custom domain está nas settings do Pages.
 
-`GITHUB_PAGES=true` no Action troca `base` para `/carolnutri/`. Localmente
-continua `/`. Domínio próprio depois: DNS + `public/CNAME`, e voltar `base` para `/`.
+### DNS (Namecheap)
+
+Nameservers: Namecheap BasicDNS. Canonical: apex. `www` redireciona via GitHub.
+
+**Apagar:** `A` de `@` para o parking (`162.255.119.121`), `CNAME` de `www` para
+`parkingpage.namecheap.com`, e qualquer **URL Redirect** de `@` ou `www`.
+
+**Manter:** MX `eforward*.registrar-servers.com` e o TXT de SPF.
+
+**Criar:**
+
+| Type | Host | Value | TTL |
+| --- | --- | --- | --- |
+| A | `@` | `185.199.108.153` | Automatic |
+| A | `@` | `185.199.109.153` | Automatic |
+| A | `@` | `185.199.110.153` | Automatic |
+| A | `@` | `185.199.111.153` | Automatic |
+| AAAA | `@` | `2606:50c0:8000::153` | Automatic |
+| AAAA | `@` | `2606:50c0:8001::153` | Automatic |
+| AAAA | `@` | `2606:50c0:8002::153` | Automatic |
+| AAAA | `@` | `2606:50c0:8003::153` | Automatic |
+| CNAME | `www` | `oviniciusramosp.github.io.` | Automatic |
+
+GitHub: **Settings → Pages → Custom domain** = `nutricarolagostini.com`.
+**Enforce HTTPS** quando o certificado aparecer.
 
 ## Tokens
 
