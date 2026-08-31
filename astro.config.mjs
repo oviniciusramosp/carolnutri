@@ -8,7 +8,11 @@ export default defineConfig({
   base: '/',
   output: 'static',
   trailingSlash: 'always',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/midia-kit/'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

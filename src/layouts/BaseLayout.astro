@@ -3,26 +3,34 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageMotion from '../components/PageMotion.astro';
-import { siteMeta } from '../lib/site';
+import { jsonLdGraph, ogImageUrl, siteMeta, siteOrigin } from '../lib/site';
 
 interface Props {
   title?: string;
   description?: string;
   intro?: boolean;
+  header?: boolean;
   footer?: boolean;
+  index?: boolean;
+  preloadHero?: boolean;
 }
 
 const {
   title,
   description = siteMeta.description,
   intro = false,
+  header = true,
   footer = true,
+  index = true,
+  preloadHero = false,
 } = Astro.props;
-const pageTitle = title ? `${title} · ${siteMeta.name}` : `${siteMeta.name} — ${siteMeta.tagline}`;
+const pageTitle = title ? `${title} · ${siteMeta.name}` : siteMeta.title;
 const canonical = Astro.site
   ? new URL(Astro.url.pathname, Astro.site).href
-  : undefined;
+  : siteOrigin + '/';
 const base = import.meta.env.BASE_URL;
+const ogImage = ogImageUrl();
+const structuredData = jsonLdGraph(canonical);
 ---
 
 <!doctype html>
@@ -31,26 +39,52 @@ const base = import.meta.env.BASE_URL;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#2f2e2c" />
+    {index ? (
+      <meta name="robots" content="index, follow" />
+    ) : (
+      <meta name="robots" content="noindex, nofollow" />
+    )}
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/png" href={`${base}favicon.png`} />
     <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300;1,9..144,400&family=Inter:wght@200;300;400;500&family=Lato:wght@300;400;500&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href={`${base}fonts/lato-normal-300.woff2`}
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
+    {preloadHero && (
+      <link
+        rel="preload"
+        as="image"
+        type="image/webp"
+        href={`${base}images/hero-1600.webp`}
+        imagesrcset={`${base}images/hero-800.webp 800w, ${base}images/hero-1600.webp 1600w`}
+        imagesizes="(max-width: 768px) 100vw, min(62vw, 100vh)"
+        fetchpriority="high"
+      />
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={siteMeta.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${siteMeta.professionalName}, nutricionista`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
-    <noscript>
-      <style>
-        [data-reveal],
-        [data-reveal-group] > * {
-          opacity: 1;
-          transform: none;
-        }
-      </style>
-    </noscript>
+    {index && (
+      <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    )}
   </head>
   <body>
     <a
@@ -59,7 +93,7 @@ const base = import.meta.env.BASE_URL;
     >
       Pular para o conteúdo
     </a>
-    <Header />
+    {header && <Header />}
     <main id="main">
       <slot />
     </main>

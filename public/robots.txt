@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /midia-kit/
+
+Sitemap: https://nutricarolagostini.com/sitemap-index.xml
