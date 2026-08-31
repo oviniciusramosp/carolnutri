@@ -48,22 +48,23 @@ Pela raiz do repo: `npm run www:dev` / `www:build` / `www:preview`.
 
 ## GitHub Pages + domínio
 
-Produção: https://nutricarolagostini.com
+O site público vive no repo `oviniciusramosp/carolnutri` (só o Astro, sem dados
+de saúde). Produção: https://nutricarolagostini.com
 
-O workflow [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publica
-em todo push em `main`. `site` e `base` em `astro.config.mjs` apontam para o
-domínio próprio (`/` no apex). O preview antigo
-`https://oviniciusramosp.github.io/carolnutri/` redireciona para o domínio
-depois que o custom domain está nas settings do Pages.
+O workflow deste monorepo ([`deploy-www.yml`](../../.github/workflows/deploy-www.yml))
+é um espelho; o deploy que vai ao ar é o de `carolnutri/.github/workflows/deploy.yml`.
 
 ### DNS (Namecheap)
 
-Nameservers: Namecheap BasicDNS. Canonical: apex. `www` redireciona via GitHub.
+Nameservers: Namecheap BasicDNS (`dns1` / `dns2.registrar-servers.com`).
+Canonical: apex. `www` redireciona via GitHub Pages.
 
-**Apagar:** `A` de `@` para o parking (`162.255.119.121`), `CNAME` de `www` para
-`parkingpage.namecheap.com`, e qualquer **URL Redirect** de `@` ou `www`.
+**Apagar** (conflitam com o GitHub): o `A` de `@` para o parking
+(`162.255.119.121`), o `CNAME` de `www` para `parkingpage.namecheap.com`,
+e qualquer **URL Redirect** de `@` ou `www`.
 
-**Manter:** MX `eforward*.registrar-servers.com` e o TXT de SPF.
+**Manter:** MX `eforward*.registrar-servers.com` e o TXT de SPF — é o
+encaminhamento de e-mail da Namecheap.
 
 **Criar:**
 
@@ -79,8 +80,10 @@ Nameservers: Namecheap BasicDNS. Canonical: apex. `www` redireciona via GitHub.
 | AAAA | `@` | `2606:50c0:8003::153` | Automatic |
 | CNAME | `www` | `oviniciusramosp.github.io.` | Automatic |
 
-GitHub: **Settings → Pages → Custom domain** = `nutricarolagostini.com`.
-**Enforce HTTPS** quando o certificado aparecer.
+No GitHub: **Settings → Pages → Custom domain** = `nutricarolagostini.com`,
+depois **Enforce HTTPS** quando o certificado aparecer (até 24 h após o DNS).
+O arquivo [`public/CNAME`](public/CNAME) documenta o mesmo host; com deploy
+via Actions o GitHub lê o domínio nas settings, não esse arquivo.
 
 ## Tokens
 

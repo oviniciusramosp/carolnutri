@@ -1,21 +1,40 @@
 ---
+import 'lenis/dist/lenis.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import JoyPatients from './_JoyPatients.astro';
+
+const base = import.meta.env.BASE_URL;
+const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`;
 ---
 
 <BaseLayout
   title="Joy"
   description="Mídia kit Joy."
   intro
+  header={false}
   footer={false}
   index={false}
 >
   <section class="joy-hero" aria-label="Joy">
-    <h1 class="sr-only">Joy</h1>
     <canvas class="joy-hero-canvas" aria-hidden="true"></canvas>
+    <div class="joy-lockup">
+      <span class="joy-lockup-carol">
+        <span class="joy-lockup-carol-mark" role="img" aria-label="Carol Agostini"></span>
+      </span>
+      <div class="joy-lockup-mid">
+        <p class="joy-lockup-role">Nutricionista</p>
+        <div class="joy-lockup-rule" aria-hidden="true"></div>
+      </div>
+      <h1 class="joy-lockup-joy">
+        <img src={`${base}images/joy-logo.svg`} alt="Joy" width="899" height="194" />
+      </h1>
+    </div>
+    <p class="joy-kit">Mídia kit</p>
   </section>
+  <JoyPatients />
 </BaseLayout>
 
-<style>
+<style define:vars={{ carolMark }}>
   :global(body) {
     background: var(--color-joy-1);
   }
@@ -25,7 +44,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     isolation: isolate;
     min-height: 100svh;
     overflow: hidden;
-    background: var(--color-joy-1);
+    background: linear-gradient(
+      to bottom left,
+      var(--color-joy-1) 20.84%,
+      var(--color-joy-2) 50.11%,
+      var(--color-joy-3) 98.23%
+    );
   }
 
   .joy-hero-canvas {
@@ -35,11 +59,173 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     width: 100%;
     height: 100%;
   }
+
+  .joy-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E");
+  }
+
+  .joy-lockup {
+    --joy-h: clamp(0.7rem, 3.2vw, 2.35rem);
+    /* Match Carol cap height (C 0–55.68 of the 72 crop) to Joy; keep the “o” on the lockup axis. */
+    --carol-h: calc(var(--joy-h) * 72 / 55.68);
+    position: absolute;
+    inset-inline: clamp(1.5rem, 6vw, 5rem);
+    top: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 1.6vw, 1.25rem);
+    transform: translateY(-50%);
+    color: var(--color-joy-mark);
+    pointer-events: none;
+  }
+
+  .joy-lockup-carol {
+    flex: 0 0 auto;
+    display: block;
+    line-height: 0;
+  }
+
+  .joy-lockup-carol-mark {
+    display: block;
+    height: var(--carol-h);
+    aspect-ratio: 467 / 72;
+    background-color: var(--color-joy-mark);
+    mask: var(--carolMark);
+    -webkit-mask: var(--carolMark);
+    /* Put the Carol “o” center (y 34.95 of 72) on the lockup axis. */
+    transform: translateY(calc(100% * (36 - 34.95) / 72));
+  }
+
+  .joy-lockup-mid {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 1.6vw, 1.25rem);
+    min-width: 0;
+  }
+
+  .joy-lockup-role {
+    flex: 0 0 auto;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: clamp(0.5rem, 0.95vw, 0.6875rem);
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .joy-lockup-rule {
+    flex: 1 1 auto;
+    height: 0.0625rem;
+    min-width: 1rem;
+    background: var(--color-joy-mark);
+    transform-origin: left center;
+  }
+
+  .joy-lockup-joy {
+    flex: 0 0 auto;
+    margin: 0;
+    line-height: 0;
+  }
+
+  .joy-lockup-joy img {
+    display: block;
+    height: var(--joy-h);
+    width: auto;
+  }
+
+  .joy-kit {
+    position: absolute;
+    right: clamp(1.5rem, 6vw, 5rem);
+    bottom: clamp(1.25rem, 4vw, 2.5rem);
+    z-index: 2;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 1.375rem;
+    border: 0.0625rem solid var(--color-joy-mark);
+    border-radius: 999px;
+    color: var(--color-joy-mark);
+    font-family: var(--font-sans);
+    font-size: clamp(0.625rem, 1vw, 0.75rem);
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    line-height: 1;
+    text-transform: uppercase;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+
+  @keyframes joy-focus {
+    from {
+      opacity: 0;
+      filter: blur(1.5rem);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  @keyframes joy-draw {
+    from {
+      opacity: 0;
+      filter: blur(0.75rem);
+      transform: scaleX(0);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes joy-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .joy-lockup-carol {
+      animation: joy-focus 1.35s cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
+    }
+
+    .joy-lockup-role {
+      animation: joy-focus 1.15s cubic-bezier(0.16, 1, 0.3, 1) 280ms both;
+    }
+
+    .joy-lockup-rule {
+      animation: joy-draw 1.15s cubic-bezier(0.22, 1, 0.36, 1) 420ms both;
+    }
+
+    .joy-lockup-joy {
+      animation: joy-focus 1.35s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+    }
+
+    .joy-kit {
+      animation: joy-fade 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.45s both;
+    }
+  }
 </style>
 
 <script>
   import { createJoyGradient } from '../../lib/joy-gradient';
+  import { startSmoothScroll } from '../../lib/smooth-scroll';
 
   const canvas = document.querySelector<HTMLCanvasElement>('.joy-hero-canvas');
   if (canvas) createJoyGradient(canvas);
+  startSmoothScroll();
 </script>

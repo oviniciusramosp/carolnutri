@@ -8,8 +8,9 @@ export const siteMeta = {
   title: 'Carol Agostini | Nutricionista clínica · CRN-10 9424',
   description:
     'Nutrição clínica com a nutricionista Carol Agostini. Planos que respeitam a sua rotina, o seu paladar e o que o corpo precisa agora.',
-  whatsapp: '5548991885441',
-  phoneDisplay: '(48) 99188-5441',
+  // Instagram bio booking link (wa.me/message/UMHEQAMPLSZ6A1) resolves here.
+  whatsapp: '554891850439',
+  phoneDisplay: '(48) 9185-0439',
   instagramHandle: 'carolagostini.nutri',
 } as const;
 

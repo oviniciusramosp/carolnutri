@@ -1010,17 +1010,18 @@ html.is-nav-menu-open {
 
 /* ——— Booking ——— */
 .booking {
-  background: var(--color-taupe);
-  padding: clamp(4rem, 8vw, 7.5rem) var(--page-inset);
+  background: var(--color-white);
+  padding: 0 var(--page-inset) clamp(4rem, 8vw, 7.5rem);
 }
 
 .booking-box {
   position: relative;
-  background-color: var(--color-almond);
+  background-color: var(--color-taupe);
   background-image: radial-gradient(
-    ellipse 58% 90% at 100% 100%,
-    rgb(from var(--color-mist) r g b / 0.4),
-    rgb(from var(--color-mist) r g b / 0) 68%
+    ellipse 70% 110% at 100% 100%,
+    var(--color-mist) 0%,
+    rgb(from var(--color-mist) r g b / 0.55) 42%,
+    rgb(from var(--color-mist) r g b / 0) 74%
   );
   border-radius: 0.75rem;
   padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 5vw, 5rem);
@@ -1878,6 +1879,15 @@ html.is-nav-menu-open {
 }
 
 @media (max-width: 768px) {
+  .booking-box {
+    background-image: radial-gradient(
+      ellipse 95% 70% at 50% 100%,
+      var(--color-mist) 0%,
+      rgb(from var(--color-mist) r g b / 0.55) 42%,
+      rgb(from var(--color-mist) r g b / 0) 74%
+    );
+  }
+
   .site-nav {
     padding: 1rem var(--page-inset);
   }

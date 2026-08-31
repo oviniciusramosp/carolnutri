@@ -35,7 +35,7 @@ const homeHref = import.meta.env.BASE_URL;
       <li style={`--i: ${i}`}><a href={`${homeHref}${link.href}`}>{link.label}</a></li>
     ))}
   </ul>
-  <a class="nav-cta" href={whatsappHref()}>Agendar consulta</a>
+  <a class="nav-cta" href={whatsappHref()} target="_blank" rel="noreferrer">Agendar consulta</a>
   <div
     id="site-menu"
     class="site-menu"
@@ -61,7 +61,7 @@ const homeHref = import.meta.env.BASE_URL;
       ))}
     </ul>
     <div class="site-menu-footer">
-      <a class="site-menu-cta" href={whatsappHref()} style={`--i: ${navLinks.length}`}>
+      <a class="site-menu-cta" href={whatsappHref()} target="_blank" rel="noreferrer" style={`--i: ${navLinks.length}`}>
         Agendar consulta
       </a>
       <div class="site-menu-socials">

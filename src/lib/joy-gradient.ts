@@ -1,8 +1,7 @@
 /**
  * Fullscreen organic gradient — port of the monopo.london hero shader
- * (https://monopo.london/). Four color lobes, IQ gradient-noise displacement,
- * film-grain overlay. Pointer X morphs warp amount (displacement), pointer Y
- * slices the 3D noise (seed) — the waves reshape instead of panning.
+ * (https://monopo.london/). 45deg CSS stops (dark top-right, cream bottom-left)
+ * warped by IQ noise. Seed walks the 3D field so the waves keep flowing.
  *
  * Gradient noise: Inigo Quilez, MIT — https://iquilezles.org/articles/gradientnoise/
  */
@@ -19,20 +18,11 @@ const FRAG = `precision highp float;
 uniform vec3 uColor1;
 uniform vec3 uColor2;
 uniform vec3 uColor3;
-uniform vec3 uColor4;
-uniform float uColorSize;
-uniform float uColorSpacing;
-uniform float uColorRotation;
-uniform float uColorSpread;
+uniform vec3 uStops;
 uniform float uDisplacement;
-uniform float uZoom;
-uniform float uSpacing;
 uniform float uSeed;
 uniform vec2 uViewportSize;
-uniform vec2 uColorOffset;
 uniform vec2 uTransformPosition;
-uniform float uNoiseSize;
-uniform float uNoiseIntensity;
 
 varying vec2 vPosition;
 
@@ -84,59 +74,39 @@ vec4 gradientDerivativesNoise3D(in vec3 x) {
   );
 }
 
-float hash(vec2 p) {
-  p = 50.0 * fract(p * 0.3183099 + vec2(0.71, 0.113));
-  return -1.0 + 2.0 * fract(p.x * p.y * (p.x + p.y));
-}
-
-float computeNoise(in vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
-    mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
-    u.y
-  );
-}
-
-vec2 rotate(vec2 v, float a) {
-  float s = sin(a);
-  float c = cos(a);
-  return mat2(c, -s, s, c) * v;
+vec3 sampleStops(float t) {
+  t = clamp(t, 0.0, 1.0);
+  float s0 = uStops.x;
+  float s1 = uStops.y;
+  float s2 = uStops.z;
+  float w1 = clamp((t - s0) / max(s1 - s0, 0.0001), 0.0, 1.0);
+  float w2 = clamp((t - s1) / max(s2 - s1, 0.0001), 0.0, 1.0);
+  return mix(mix(uColor1, uColor2, w1), uColor3, w2);
 }
 
 void main() {
-  vec2 position = vPosition;
-  position.x *= min(1.0, uViewportSize.x / uViewportSize.y);
-  position.y *= min(1.0, uViewportSize.y / uViewportSize.x);
-  position /= uZoom;
-  position += uTransformPosition;
+  vec2 p = vPosition * uViewportSize;
+  float span = uViewportSize.x + uViewportSize.y;
+  // Color axis +45deg: t=0 at top-right, t=1 at bottom-left.
+  float t = 0.5 - 0.5 * (p.x + p.y) / span;
 
-  vec2 noiseLocalPosition = position * 0.5 + 0.5;
-  vec3 displacementNoise = gradientDerivativesNoise3D(vec3(noiseLocalPosition, uSeed)).xyz;
+  float along = (p.y - p.x) / span;
+  float across = (p.x + p.y) / span;
+  vec2 uv = vec2(along, across);
+  vec2 uvA = uv * 1.25 + uTransformPosition;
+  vec2 uvB = uv * 0.62 + vec2(uTransformPosition.y, -uTransformPosition.x) * 0.85;
+  uvB.y += uSeed * 0.22;
 
-  float grain = computeNoise(vPosition * uViewportSize / uNoiseSize);
+  vec3 blob = gradientDerivativesNoise3D(vec3(uvB, uSeed * 0.55 + 3.1)).xyz;
+  vec2 warped = uvA + vec2(blob.x, blob.z) * 0.65;
+  vec3 n = gradientDerivativesNoise3D(vec3(warped, uSeed * 0.8)).xyz;
 
-  position += displacementNoise.xz * uDisplacement;
+  float warp = 0.32 + uDisplacement * 0.055;
+  t += n.x * warp + blob.x * warp * 0.45;
+  t = clamp(t, 0.0, 1.0);
 
-  vec2 offsetedPosition = position;
-  offsetedPosition -= uColorOffset;
-  offsetedPosition = mod(offsetedPosition - uSpacing, vec2(uSpacing * 2.0)) - uSpacing;
-  offsetedPosition = rotate(offsetedPosition, -uColorRotation);
-  offsetedPosition /= vec2(uColorSize, uColorSize);
-  offsetedPosition *= vec2(1.0 / uColorSpread, 1.0);
-
-  vec3 color = uColor1;
-  color = mix(uColor1, color, smoothstep(0.0, 1.0, distance(offsetedPosition, vec2(0.0, uColorSpacing * 1.5))));
-  color = mix(uColor2, color, smoothstep(0.0, 1.0, distance(offsetedPosition, vec2(0.0, uColorSpacing * 0.5))));
-  color = mix(uColor3, color, smoothstep(0.0, 1.0, distance(offsetedPosition, vec2(0.0, -uColorSpacing * 0.5))));
-  color = mix(uColor4, color, smoothstep(0.0, 1.0, distance(offsetedPosition, vec2(0.0, -uColorSpacing * 1.5))));
-
-  color += grain * uNoiseIntensity;
-  color = clamp(color, 0.0, 1.0);
-
-  gl_FragColor = vec4(color, 1.0);
+  vec3 color = sampleStops(t);
+  gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
 }`;
 
 export type Rgb = [number, number, number];
@@ -145,7 +115,7 @@ export type JoyGradientOptions = {
   color1: Rgb;
   color2: Rgb;
   color3: Rgb;
-  color4: Rgb;
+  stops: [number, number, number];
   colorSize: number;
   colorSpacing: number;
   colorRotation: number;
@@ -159,6 +129,8 @@ export type JoyGradientOptions = {
   noiseSize: number;
   noiseIntensity: number;
   lerp: number;
+  idleDrift: number;
+  idleDelayMs: number;
 };
 
 /** Homepage values from monopo.london's `<monopo-gradient>`. */
@@ -166,7 +138,7 @@ export const MONOPO_HOME: JoyGradientOptions = {
   color1: hexRgb('#5c331d'),
   color2: hexRgb('#a55c25'),
   color3: hexRgb('#e7d5c1'),
-  color4: hexRgb('#e7d5c1'),
+  stops: [0.2084, 0.5011, 0.9823],
   colorSize: 0.58,
   colorSpacing: 0.52,
   colorRotation: -0.381592653589793,
@@ -180,6 +152,8 @@ export const MONOPO_HOME: JoyGradientOptions = {
   noiseSize: 0.5,
   noiseIntensity: 0.04,
   lerp: 0.1,
+  idleDrift: 0.52,
+  idleDelayMs: 500,
 };
 
 export type JoyGradient = {
@@ -195,7 +169,6 @@ export function createJoyGradient(
     color1: cssRgb('--color-joy-1', MONOPO_HOME.color1),
     color2: cssRgb('--color-joy-2', MONOPO_HOME.color2),
     color3: cssRgb('--color-joy-3', MONOPO_HOME.color3),
-    color4: cssRgb('--color-joy-4', MONOPO_HOME.color4),
     ...options,
   };
   const contextOpts: WebGLContextAttributes = {
@@ -221,30 +194,18 @@ export function createJoyGradient(
   const uColor1 = gl.getUniformLocation(prog, 'uColor1');
   const uColor2 = gl.getUniformLocation(prog, 'uColor2');
   const uColor3 = gl.getUniformLocation(prog, 'uColor3');
-  const uColor4 = gl.getUniformLocation(prog, 'uColor4');
-  const uColorSize = gl.getUniformLocation(prog, 'uColorSize');
-  const uColorSpacing = gl.getUniformLocation(prog, 'uColorSpacing');
-  const uColorRotation = gl.getUniformLocation(prog, 'uColorRotation');
-  const uColorSpread = gl.getUniformLocation(prog, 'uColorSpread');
+  const uStops = gl.getUniformLocation(prog, 'uStops');
   const uDisplacement = gl.getUniformLocation(prog, 'uDisplacement');
-  const uZoom = gl.getUniformLocation(prog, 'uZoom');
-  const uSpacing = gl.getUniformLocation(prog, 'uSpacing');
   const uSeed = gl.getUniformLocation(prog, 'uSeed');
   const uViewportSize = gl.getUniformLocation(prog, 'uViewportSize');
-  const uColorOffset = gl.getUniformLocation(prog, 'uColorOffset');
   const uTransformPosition = gl.getUniformLocation(prog, 'uTransformPosition');
-  const uNoiseSize = gl.getUniformLocation(prog, 'uNoiseSize');
-  const uNoiseIntensity = gl.getUniformLocation(prog, 'uNoiseIntensity');
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const [posX, posY] = opts.position;
   let viewW = 1;
   let viewH = 1;
-  // PixiIntro: force 0..5 from pointer X, seed -1..1 from pointer Y, both lerped.
-  let force = opts.displacement;
-  let seed = opts.seed;
-  let targetForce = force;
-  let targetSeed = seed;
+  let elapsed = 0;
+  let lastNow = performance.now();
   let raf = 0;
   let running = true;
 
@@ -269,41 +230,28 @@ export function createJoyGradient(
     gl.uniform3fv(uColor1, opts.color1);
     gl.uniform3fv(uColor2, opts.color2);
     gl.uniform3fv(uColor3, opts.color3);
-    gl.uniform3fv(uColor4, opts.color4);
-    gl.uniform1f(uColorSize, opts.colorSize);
-    gl.uniform1f(uColorSpacing, opts.colorSpacing);
-    gl.uniform1f(uColorRotation, opts.colorRotation);
-    gl.uniform1f(uColorSpread, opts.colorSpread);
-    gl.uniform1f(uDisplacement, force);
-    gl.uniform1f(uZoom, opts.zoom);
-    gl.uniform1f(uSpacing, opts.spacing);
-    gl.uniform1f(uSeed, seed);
+    gl.uniform3fv(uStops, opts.stops);
+    gl.uniform1f(uDisplacement, opts.displacement + Math.sin(elapsed * 0.33) * 1.35);
+    gl.uniform1f(uSeed, opts.seed + elapsed * opts.idleDrift);
     gl.uniform2f(uViewportSize, viewW, viewH);
-    gl.uniform2f(uColorOffset, opts.colorOffset[0], opts.colorOffset[1]);
-    gl.uniform2f(uTransformPosition, posX, posY);
-    gl.uniform1f(uNoiseSize, opts.noiseSize);
-    gl.uniform1f(uNoiseIntensity, opts.noiseIntensity);
+    gl.uniform2f(
+      uTransformPosition,
+      posX + Math.sin(elapsed * 0.21) * 0.62 + Math.sin(elapsed * 0.07) * 0.38,
+      posY + Math.cos(elapsed * 0.16) * 0.55 + elapsed * 0.08,
+    );
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
-  function tick() {
+  function tick(now: number) {
     if (!running) return;
     if (!reduceMotion.matches) {
-      force += (targetForce - force) * opts.lerp;
-      seed += (targetSeed - seed) * opts.lerp;
+      const dt = Math.min(0.05, (now - lastNow) / 1000);
+      lastNow = now;
+      elapsed += dt;
     }
     draw();
     raf = requestAnimationFrame(tick);
-  }
-
-  function onPointerMove(event: PointerEvent) {
-    const rect = canvas.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
-    const nx = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-    const ny = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-    targetForce = mapRange(nx, 0, 1, 0, 5);
-    targetSeed = mapRange(ny, 0, 1, -1, 1);
   }
 
   const observer = new ResizeObserver(() => {
@@ -312,7 +260,6 @@ export function createJoyGradient(
   });
   observer.observe(canvas);
 
-  window.addEventListener('pointermove', onPointerMove, { passive: true });
   resize();
   draw();
   raf = requestAnimationFrame(tick);
@@ -322,25 +269,9 @@ export function createJoyGradient(
       running = false;
       cancelAnimationFrame(raf);
       observer.disconnect();
-      window.removeEventListener('pointermove', onPointerMove);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     },
   };
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
-}
-
-function mapRange(
-  value: number,
-  inMin: number,
-  inMax: number,
-  outMin: number,
-  outMax: number,
-): number {
-  if (inMax === inMin) return outMin;
-  return outMin + ((value - inMin) / (inMax - inMin)) * (outMax - outMin);
 }
 
 function hexRgb(hex: string): Rgb {
