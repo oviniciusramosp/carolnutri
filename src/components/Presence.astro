@@ -1,0 +1,294 @@
+---
+import { presenceCountries } from '../lib/content';
+---
+
+<section class="presence" id="presenca">
+  <div class="presence-inner" data-reveal-group>
+    <div class="presence-copy">
+      <p class="eyebrow">Atendimentos online</p>
+      <h2 class="section-title">
+        Adaptado para onde <em>você estiver</em>
+      </h2>
+      <p class="presence-desc">
+        Atendo pacientes em vários países. A consulta online é mais prática mas
+        os processos e cuidados são os mesmos. Adapto os alimentos para onde
+        você estiver ou for viajar.
+      </p>
+      <ul class="presence-countries">
+        {presenceCountries.map((country) => (
+          <li>
+            <span class="presence-country-pin" aria-hidden="true"></span>
+            {country.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="presence-globe" id="presence-globe">
+      <canvas class="presence-canvas" aria-hidden="true"></canvas>
+      <ul class="presence-pins" aria-hidden="true">
+        {presenceCountries.map((country) => (
+          <li class="presence-pin" data-id={country.id}>
+            <span class="presence-pin-label">{country.shortName}</span>
+            <span class="presence-pin-mark"></span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  import {
+    createBrandGlobe,
+    GLOBE_DISK_RADIUS,
+    LABEL_FADE_START_DEPTH,
+    phiWhenFirstLabelFadesIn,
+    type BrandGlobe,
+  } from '../lib/brand-globe';
+  import { presenceCountries } from '../lib/content';
+
+  const host = document.getElementById('presence-globe');
+  const canvas = host?.querySelector<HTMLCanvasElement>('.presence-canvas');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (host && canvas) {
+    const ROTATE_STEP = 0.0018;
+    const GLOBE_THETA = 0.28;
+    const MARKER_ELEVATION = 0.04;
+    const GLOBE_SCALE = 1.04;
+    const START_PHI = phiWhenFirstLabelFadesIn(
+      presenceCountries.map((country) => [country.location[0], country.location[1]]),
+      GLOBE_THETA,
+      MARKER_ELEVATION,
+      LABEL_FADE_START_DEPTH,
+    );
+    const globeHost = host;
+    const globeCanvas = canvas;
+
+    let globe: BrandGlobe | null = null;
+    let phi = START_PHI;
+    let frame = 0;
+    let visible = false;
+    let mounting: Promise<void> | null = null;
+
+    function tokenRgb(token: string, fallback: [number, number, number]): [number, number, number] {
+      const raw = getComputedStyle(document.documentElement)
+        .getPropertyValue(`--color-${token}`)
+        .trim();
+      const hex = raw.startsWith('#') ? raw.slice(1) : '';
+      if (hex.length !== 6) return fallback;
+      const n = Number.parseInt(hex, 16);
+      if (Number.isNaN(n)) return fallback;
+      return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+    }
+
+    function cssSize(): number {
+      return Math.max(1, Math.round(globeHost.clientWidth));
+    }
+
+    function tick() {
+      if (!globe || !visible) return;
+      if (reduceMotion.matches) {
+        globe.update({ phi });
+        syncPins();
+        return;
+      }
+      if (document.visibilityState === 'visible') {
+        phi += ROTATE_STEP;
+      }
+      globe.update({ phi });
+      syncPins();
+      frame = requestAnimationFrame(tick);
+    }
+
+    function syncSize() {
+      if (!globe) return;
+      globe.update({ width: cssSize(), height: cssSize(), phi });
+    }
+
+    const pins = [...globeHost.querySelectorAll<HTMLElement>('.presence-pin')];
+    let cobeVarsStyle: HTMLStyleElement | null = null;
+
+    function findCobeVarsStyle(): HTMLStyleElement | null {
+      if (cobeVarsStyle?.isConnected) return cobeVarsStyle;
+      for (const el of document.head.querySelectorAll('style')) {
+        if (el.textContent?.includes('--cobe-visible-')) {
+          cobeVarsStyle = el;
+          return el;
+        }
+      }
+      return null;
+    }
+
+    function isFacingCamera(id: string): boolean {
+      const vars = findCobeVarsStyle()?.textContent ?? '';
+      return vars.includes(`--cobe-visible-${id}:`);
+    }
+
+    function smoothstep(edge0: number, edge1: number, x: number): number {
+      const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
+      return t * t * (3 - 2 * t);
+    }
+
+    function setLabelFrontness(pin: HTMLElement, depth: number) {
+      const label = pin.querySelector<HTMLElement>('.presence-pin-label');
+      if (!label) return;
+      const opacity = reduceMotion.matches
+        ? depth > 0.36
+          ? 1
+          : 0
+        : smoothstep(LABEL_FADE_START_DEPTH, 0.5, depth);
+      label.style.opacity = String(opacity);
+      if (opacity > 0.38) pin.classList.add('is-labeled');
+      else if (opacity < 0.14) pin.classList.remove('is-labeled');
+    }
+
+    function clipPinBehindGlobe(pin: HTMLElement) {
+      const globe = globeHost.getBoundingClientRect();
+      const box = pin.getBoundingClientRect();
+      const radius = (GLOBE_DISK_RADIUS * GLOBE_SCALE * globe.width) / 2;
+      const cx = globe.left + globe.width / 2 - box.left;
+      const cy = globe.top + globe.height / 2 - box.top;
+      const mask = `radial-gradient(circle at ${cx}px ${cy}px, transparent ${radius}px, #000 ${radius + 0.5}px)`;
+      pin.style.setProperty('-webkit-mask-image', mask);
+      pin.style.setProperty('mask-image', mask);
+    }
+
+    function clearPinClip(pin: HTMLElement) {
+      pin.style.removeProperty('-webkit-mask-image');
+      pin.style.removeProperty('mask-image');
+    }
+
+    function syncPins() {
+      const wrapper = globeCanvas.parentElement;
+      if (!wrapper) return;
+      const anchors = new Map<string, HTMLElement>();
+      for (const el of wrapper.children) {
+        if (!(el instanceof HTMLElement)) continue;
+        const name = el.style.getPropertyValue('anchor-name');
+        if (name.startsWith('--cobe-')) anchors.set(name.slice('--cobe-'.length), el);
+      }
+      const behind: HTMLElement[] = [];
+      for (const pin of pins) {
+        const id = pin.dataset.id;
+        if (!id) continue;
+        const anchor = anchors.get(id);
+        if (!anchor) {
+          pin.classList.remove('is-front', 'is-behind');
+          clearPinClip(pin);
+          setLabelFrontness(pin, 0);
+          continue;
+        }
+        const x = Number.parseFloat(anchor.dataset.x ?? '');
+        const y = Number.parseFloat(anchor.dataset.y ?? '');
+        if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+        const span = globeHost.clientWidth;
+        pin.style.setProperty('--pin-x', `${x * span}px`);
+        pin.style.setProperty('--pin-y', `${y * span}px`);
+        const facing = isFacingCamera(id);
+        const depth = Number.parseFloat(anchor.dataset.depth ?? '0');
+        const front = Number.isFinite(depth) ? depth : 0;
+        setLabelFrontness(pin, front);
+        pin.style.zIndex = String(Math.round((front + 1) * 100));
+        if (facing) {
+          pin.classList.add('is-front');
+          pin.classList.remove('is-behind');
+          clearPinClip(pin);
+        } else {
+          pin.classList.remove('is-front');
+          pin.classList.add('is-behind');
+          behind.push(pin);
+        }
+      }
+      const germanyPin = pins.find((pin) => pin.dataset.id === 'germany');
+      const swedenPin = pins.find((pin) => pin.dataset.id === 'sweden');
+      if (germanyPin && swedenPin) {
+        const swedenZ = Number.parseInt(swedenPin.style.zIndex || '0', 10);
+        const germanyZ = Number.parseInt(germanyPin.style.zIndex || '0', 10);
+        if (germanyZ <= swedenZ) germanyPin.style.zIndex = String(swedenZ + 1);
+      }
+      for (const pin of behind) clipPinBehindGlobe(pin);
+    }
+
+    async function mount() {
+      if (globe || mounting) return mounting ?? undefined;
+      mounting = Promise.resolve().then(() => {
+        const size = cssSize();
+
+        globe = createBrandGlobe(globeCanvas, {
+          devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+          width: size,
+          height: size,
+          phi: START_PHI,
+          theta: GLOBE_THETA,
+          diffuse: 0.9,
+          mapSamples: 18_000,
+          oceanColor: tokenRgb('taupe', [0.933, 0.922, 0.902]),
+          landColor: tokenRgb('terracota', [0.804, 0.694, 0.6]),
+          markerColor: tokenRgb('steel', [0.592, 0.667, 0.69]),
+          markerElevation: MARKER_ELEVATION,
+          scale: GLOBE_SCALE,
+          markers: presenceCountries.map((country) => ({
+            id: country.id,
+            location: [country.location[0], country.location[1]] as [number, number],
+            size: 0.04,
+          })),
+        });
+
+        globeCanvas.style.width = '100%';
+        globeCanvas.style.height = '100%';
+
+        const wrapper = globeCanvas.parentElement;
+        const pinList = globeHost.querySelector('.presence-pins');
+        if (wrapper && pinList && pinList.parentElement !== wrapper) {
+          wrapper.append(pinList);
+        }
+        syncPins();
+      });
+      await mounting;
+    }
+
+    async function start() {
+      const entering = !visible;
+      visible = true;
+      await mount();
+      if (!visible) return;
+      if (entering) {
+        phi = START_PHI;
+        globe?.update({ phi });
+        syncPins();
+      }
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(tick);
+    }
+
+    function stop() {
+      visible = false;
+      cancelAnimationFrame(frame);
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) void start();
+          else stop();
+        }
+      },
+      { threshold: 0.12 },
+    );
+    io.observe(globeHost);
+
+    const ro = new ResizeObserver(() => syncSize());
+    ro.observe(globeHost);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        stop();
+        return;
+      }
+      const rect = globeHost.getBoundingClientRect();
+      if (rect.bottom > 0 && rect.top < window.innerHeight) void start();
+    });
+  }
+</script>

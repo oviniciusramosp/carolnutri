@@ -1,0 +1,23 @@
+---
+import { methods } from '../lib/content';
+---
+
+<section class="methods" id="metodos">
+  <div class="methods-header" data-reveal-group>
+    <p class="eyebrow centered">Métodos e tecnologias</p>
+    <h2 class="section-title">
+      Um cuidado desenhado<br />para a <em>sua vida.</em>
+    </h2>
+    <p class="methods-sub">Cinco dimensões em uma experiência contínua.</p>
+  </div>
+
+  <div class="methods-grid">
+    {methods.map((item, i) => (
+      <article class="method-card" data-reveal style={`--reveal-i: ${i}`}>
+        <div class={`method-media tone-${item.tone}`} aria-hidden="true"></div>
+        <h3 class="method-name">{item.name}</h3>
+        <p class="method-desc">{item.desc}</p>
+      </article>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,37 @@
+---
+import { partners } from '../lib/content';
+
+const base = import.meta.env.BASE_URL;
+/* Six identical groups: one set is narrower than a desktop viewport, so two
+   copies leave the right side empty near the loop. Six keeps leftover content
+   wider than an ultrawide screen when the animation wraps. */
+const marqueeCopies = 6;
+---
+
+<section class="partners" id="parcerias">
+  <div class="partners-header" data-reveal-group>
+    <p class="eyebrow centered">Parcerias</p>
+    <h2 class="section-title on-dark">
+      Nutrindo <em>todos</em> os aspectos<br />da sua vida
+    </h2>
+  </div>
+  <ul class="sr-only">
+    {partners.map((partner) => (
+      <li>{partner.name}</li>
+    ))}
+  </ul>
+  <div class="partners-track-wrap" aria-hidden="true">
+    <div class="partners-track">
+      {Array.from({ length: marqueeCopies }, () => (
+        <div class="partners-group">
+          {partners.map((partner) => (
+            <div
+              class="partner-logo"
+              style={`--logo: url("${base}${partner.src}"); aspect-ratio: ${partner.width} / ${partner.height};`}
+            ></div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

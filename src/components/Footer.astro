@@ -1,0 +1,45 @@
+---
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { siteMeta, whatsappHref, phoneHref, instagramHref } from '../lib/site';
+import { footerNav } from '../lib/content';
+
+const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL;
+const logoSvg = readFileSync(
+  join(process.cwd(), 'public/images/logo-vertical.svg'),
+  'utf8',
+)
+  .replace('<svg', '<svg class="footer-logo" aria-hidden="true"')
+  .replaceAll('clip0_458_172', 'footer-logo-clip');
+---
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <a href={base} class="footer-brand" aria-label={`${siteMeta.name} — início`} set:html={logoSvg} />
+    </div>
+    <div class="footer-col">
+      <h4>Navegue</h4>
+      <ul>
+        {footerNav.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contato</h4>
+      <ul>
+        <li><a href="#agendas">Agendar consulta</a></li>
+        <li><a href={phoneHref()}>{siteMeta.phoneDisplay}</a></li>
+        <li><a href={whatsappHref()} target="_blank" rel="noreferrer">WhatsApp</a></li>
+        <li><a href={instagramHref()} target="_blank" rel="noreferrer">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">
+      © {year} {siteMeta.professionalName} · {siteMeta.name} · Todos os direitos reservados
+    </p>
+  </div>
+</footer>

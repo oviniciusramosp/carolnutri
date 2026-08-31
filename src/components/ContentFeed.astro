@@ -1,0 +1,222 @@
+---
+import { siteMeta, instagramHref } from '../lib/site';
+import { contentPosts, instagramPostHref } from '../lib/content';
+
+const base = import.meta.env.BASE_URL;
+const href = instagramHref();
+/* Three copies: auto-scroll plus drag/trackpad both ways, wrapping on the
+   middle copy so the track never runs out of content on either side. */
+const marqueeCopies = 3;
+
+function postLabel(post: (typeof contentPosts)[number]): string {
+  return post.kind === 'reel'
+    ? `Abrir reel de ${siteMeta.professionalName} no Instagram`
+    : `Abrir publicação de ${siteMeta.professionalName} no Instagram`;
+}
+---
+
+<section class="content-feed" id="conteudo">
+  <div class="content-header" data-reveal-group>
+    <div>
+      <p class="eyebrow">Conteúdo</p>
+      <h2 class="section-title">
+        Faça parte da<br />comunidade <em>{siteMeta.name}</em>
+      </h2>
+    </div>
+    <a class="btn-ghost" href={href} target="_blank" rel="noreferrer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+      </svg>
+      @{siteMeta.instagramHandle}
+    </a>
+  </div>
+
+  <div class="content-track-wrap" id="content-track">
+    <div class="content-track">
+      {Array.from({ length: marqueeCopies }, () => (
+        <div class="content-group">
+          {contentPosts.map((post) => (
+            <a
+              class="content-tile"
+              href={instagramPostHref(post)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={postLabel(post)}
+            >
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={`${base}images/content/${post.shortcode}-400.webp 400w, ${base}images/content/${post.shortcode}-800.webp 800w`}
+                  sizes="16.25rem"
+                />
+                <img
+                  src={`${base}images/content/${post.shortcode}-800.jpg`}
+                  srcset={`${base}images/content/${post.shortcode}-400.jpg 400w, ${base}images/content/${post.shortcode}-800.jpg 800w`}
+                  sizes="16.25rem"
+                  alt=""
+                  width="800"
+                  height="1000"
+                  loading="lazy"
+                  decoding="async"
+                  draggable="false"
+                />
+              </picture>
+              {post.kind === 'reel' && (
+                <span class="content-tile-reel" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 5.14v13.72L19 12 8 5.14z" />
+                  </svg>
+                </span>
+              )}
+              <span class="overlay">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </span>
+            </a>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const wrap = document.getElementById('content-track');
+  const group = wrap?.querySelector<HTMLElement>('.content-group');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const loopMs = 100_000;
+
+  if (wrap && group) {
+    let groupWidth = 0;
+    let hovering = false;
+    let dragging = false;
+    let dragDistance = 0;
+    let dragStartX = 0;
+    let dragStartScroll = 0;
+    let userPauseUntil = 0;
+    let lastTime = performance.now();
+    let leftover = 0;
+
+    const measure = () => {
+      const next = group.getBoundingClientRect().width;
+      if (next <= 0) return;
+      if (groupWidth > 0 && Math.abs(next - groupWidth) > 1) {
+        const offset = wrap.scrollLeft % groupWidth;
+        groupWidth = next;
+        wrap.scrollLeft = groupWidth + offset;
+        return;
+      }
+      if (groupWidth === 0) {
+        groupWidth = next;
+        wrap.scrollLeft = groupWidth;
+      }
+    };
+
+    const normalize = () => {
+      if (groupWidth <= 0) return;
+      if (wrap.scrollLeft >= groupWidth * 2) wrap.scrollLeft -= groupWidth;
+      else if (wrap.scrollLeft < 1) wrap.scrollLeft += groupWidth;
+    };
+
+    const pingUserScroll = () => {
+      leftover = 0;
+      userPauseUntil = performance.now() + 1500;
+    };
+
+    const autoPaused = () =>
+      reduceMotion.matches ||
+      hovering ||
+      dragging ||
+      document.hidden ||
+      performance.now() < userPauseUntil;
+
+    const tick = (now: number) => {
+      const dt = now - lastTime;
+      lastTime = now;
+      if (!autoPaused() && groupWidth > 0) {
+        leftover += (groupWidth / loopMs) * dt;
+        const step = Math.floor(leftover);
+        if (step > 0) {
+          leftover -= step;
+          wrap.scrollLeft += step;
+          normalize();
+        }
+      }
+      requestAnimationFrame(tick);
+    };
+
+    const onDragMove = (event: PointerEvent) => {
+      if (!dragging) return;
+      event.preventDefault();
+      const delta = event.pageX - dragStartX;
+      dragDistance = Math.max(dragDistance, Math.abs(delta));
+      wrap.scrollLeft = dragStartScroll - delta;
+      const before = wrap.scrollLeft;
+      normalize();
+      dragStartScroll += wrap.scrollLeft - before;
+    };
+
+    const onDragEnd = (event: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      wrap.classList.remove('is-dragging');
+      window.removeEventListener('pointermove', onDragMove);
+      window.removeEventListener('pointerup', onDragEnd);
+      window.removeEventListener('pointercancel', onDragEnd);
+      if (event.type !== 'pointerup' || dragDistance > 5) return;
+      const tile = document
+        .elementFromPoint(event.clientX, event.clientY)
+        ?.closest<HTMLAnchorElement>('a.content-tile');
+      tile?.click();
+    };
+
+    wrap.addEventListener('pointerdown', (event) => {
+      if (event.pointerType !== 'mouse') return;
+      event.preventDefault();
+      leftover = 0;
+      dragging = true;
+      dragDistance = 0;
+      dragStartX = event.pageX;
+      dragStartScroll = wrap.scrollLeft;
+      wrap.classList.add('is-dragging');
+      window.addEventListener('pointermove', onDragMove);
+      window.addEventListener('pointerup', onDragEnd);
+      window.addEventListener('pointercancel', onDragEnd);
+    });
+
+    wrap.addEventListener('pointerenter', () => {
+      hovering = true;
+    });
+    wrap.addEventListener('pointerleave', () => {
+      hovering = false;
+    });
+
+    wrap.addEventListener(
+      'wheel',
+      (event) => {
+        leftover = 0;
+        userPauseUntil = performance.now() + 1500;
+        if (event.deltaX !== 0 || event.deltaY === 0) return;
+        event.preventDefault();
+        wrap.scrollLeft += event.deltaY;
+        normalize();
+      },
+      { passive: false },
+    );
+    wrap.addEventListener('touchstart', pingUserScroll, { passive: true });
+    wrap.addEventListener('touchmove', pingUserScroll, { passive: true });
+    wrap.addEventListener('scroll', normalize, { passive: true });
+
+    window.addEventListener('resize', measure);
+    document.addEventListener('visibilitychange', () => {
+      lastTime = performance.now();
+    });
+
+    measure();
+    requestAnimationFrame((time) => {
+      lastTime = time;
+      tick(time);
+    });
+  }
+</script>

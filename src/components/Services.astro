@@ -1,0 +1,141 @@
+---
+import { services } from '../lib/content';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<section class="services" id="servicos">
+  <div class="services-header" data-reveal-group>
+    <p class="eyebrow">Serviços</p>
+    <h2 class="section-title">
+      O cuidado se apresenta de <em>diferentes</em> formas.
+    </h2>
+    <p class="services-sub">
+      Da primeira consulta ao acompanhamento no app. Cada serviço foi desenhado
+      para se integrar a um protocolo contínuo — não a uma dieta isolada.
+    </p>
+  </div>
+
+  <div class="services-scroller">
+    <button type="button" class="services-nav-btn services-nav-prev" aria-label="Serviços anteriores">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </button>
+    <div class="services-track-wrap" id="services-track" data-drag-scroll>
+      <div class="services-track" data-reveal-group>
+        {services.map((item, i) => (
+          <article
+            class:list={[
+              'service-card',
+              `tone-${item.tone}`,
+              'image' in item && item.image && 'has-photo',
+            ]}
+            style={`--reveal-i: ${i}`}
+            tabindex="0"
+          >
+            {'image' in item && item.image && (
+              <picture class="service-card-photo">
+                <source
+                  type="image/webp"
+                  srcset={`${base}${item.image.src}-400.webp 400w, ${base}${item.image.src}-800.webp 800w`}
+                  sizes="(max-width: 768px) 13.75rem, 18.75rem"
+                />
+                <img
+                  src={`${base}${item.image.src}-800.jpg`}
+                  srcset={`${base}${item.image.src}-400.jpg 400w, ${base}${item.image.src}-800.jpg 800w`}
+                  sizes="(max-width: 768px) 13.75rem, 18.75rem"
+                  alt={item.image.alt}
+                  width={item.image.width}
+                  height={item.image.height}
+                  loading="lazy"
+                  decoding="async"
+                  style={
+                    'objectPosition' in item.image && item.image.objectPosition
+                      ? `object-position: ${item.image.objectPosition}`
+                      : undefined
+                  }
+                />
+              </picture>
+            )}
+            <h3 class="name">{item.name}</h3>
+            <p class="desc">{item.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+    <button type="button" class="services-nav-btn services-nav-next" aria-label="Próximos serviços">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 6l6 6-6 6" />
+      </svg>
+    </button>
+  </div>
+</section>
+
+<script>
+  const wrap = document.getElementById('services-track');
+  const scroller = wrap?.closest('.services-scroller');
+  const prevBtn = scroller?.querySelector<HTMLButtonElement>('.services-nav-prev');
+  const nextBtn = scroller?.querySelector<HTMLButtonElement>('.services-nav-next');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (wrap) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    wrap.addEventListener('pointerdown', (event) => {
+      isDown = true;
+      wrap.classList.add('is-dragging');
+      startX = event.pageX - wrap.offsetLeft;
+      scrollLeft = wrap.scrollLeft;
+      wrap.setPointerCapture(event.pointerId);
+    });
+
+    wrap.addEventListener('pointerleave', () => {
+      isDown = false;
+      wrap.classList.remove('is-dragging');
+    });
+
+    wrap.addEventListener('pointerup', () => {
+      isDown = false;
+      wrap.classList.remove('is-dragging');
+    });
+
+    wrap.addEventListener('pointermove', (event) => {
+      if (!isDown) return;
+      event.preventDefault();
+      const x = event.pageX - wrap.offsetLeft;
+      wrap.scrollLeft = scrollLeft - (x - startX);
+    });
+
+    const updateNav = () => {
+      const max = wrap.scrollWidth - wrap.clientWidth;
+      if (prevBtn) prevBtn.disabled = wrap.scrollLeft <= 2;
+      if (nextBtn) nextBtn.disabled = wrap.scrollLeft >= max - 2;
+    };
+
+    const scrollToNeighbor = (dir: 1 | -1) => {
+      const cards = [...wrap.querySelectorAll<HTMLElement>('.service-card')];
+      const wrapRect = wrap.getBoundingClientRect();
+      const pad = Number.parseFloat(getComputedStyle(wrap).paddingLeft) || 0;
+      const leftEdge = wrapRect.left + pad;
+      const instant = reduceMotion.matches;
+      const target =
+        dir > 0
+          ? cards.find((card) => card.getBoundingClientRect().left > leftEdge + 12)
+          : [...cards].reverse().find((card) => card.getBoundingClientRect().left < leftEdge - 12);
+      if (!target) return;
+      wrap.scrollBy({
+        left: target.getBoundingClientRect().left - leftEdge,
+        behavior: instant ? 'auto' : 'smooth',
+      });
+    };
+
+    prevBtn?.addEventListener('click', () => scrollToNeighbor(-1));
+    nextBtn?.addEventListener('click', () => scrollToNeighbor(1));
+    wrap.addEventListener('scroll', updateNav, { passive: true });
+    window.addEventListener('resize', updateNav);
+    updateNav();
+  }
+</script>

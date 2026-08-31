@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Joy"
+  description="Mídia kit Joy."
+  intro
+  footer={false}
+>
+  <section class="joy-hero" aria-label="Joy">
+    <h1 class="sr-only">Joy</h1>
+    <canvas class="joy-hero-canvas" aria-hidden="true"></canvas>
+  </section>
+</BaseLayout>
+
+<style>
+  :global(body) {
+    background: var(--color-joy-1);
+  }
+
+  .joy-hero {
+    position: relative;
+    isolation: isolate;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--color-joy-1);
+  }
+
+  .joy-hero-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  import { createJoyGradient } from '../../lib/joy-gradient';
+
+  const canvas = document.querySelector<HTMLCanvasElement>('.joy-hero-canvas');
+  if (canvas) createJoyGradient(canvas);
+</script>
