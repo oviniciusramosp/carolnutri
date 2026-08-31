@@ -23,14 +23,14 @@ const logoSvg = readFileSync(
       <h4>Navegue</h4>
       <ul>
         {footerNav.map((link) => (
-          <li><a href={link.href}>{link.label}</a></li>
+          <li><a href={`${base}${link.href}`}>{link.label}</a></li>
         ))}
       </ul>
     </div>
     <div class="footer-col">
       <h4>Contato</h4>
       <ul>
-        <li><a href="#agendas">Agendar consulta</a></li>
+        <li><a href={`${base}#agendas`}>Agendar consulta</a></li>
         <li><a href={phoneHref()}>{siteMeta.phoneDisplay}</a></li>
         <li><a href={whatsappHref()} target="_blank" rel="noreferrer">WhatsApp</a></li>
         <li><a href={instagramHref()} target="_blank" rel="noreferrer">Instagram</a></li>

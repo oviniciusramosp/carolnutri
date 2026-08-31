@@ -160,6 +160,13 @@ export function instagramPostHref(post: (typeof contentPosts)[number]): string {
   return `https://www.instagram.com/${segment}/${post.shortcode}/`;
 }
 
+/** Indexed pages kept off the home chrome — sitemap + JSON-LD only. */
+export const seoPages = [
+  { href: 'sobre/', label: 'Sobre' },
+  { href: 'servicos/', label: 'Serviços' },
+  { href: 'contato/', label: 'Contato' },
+] as const;
+
 export const footerNav = [
   { href: '#manifesto', label: 'Manifesto' },
   { href: '#servicos', label: 'Serviços' },

@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SeoArticle from '../components/SeoArticle.astro';
+import { instagramHref, phoneHref, siteMeta, whatsappHref } from '../lib/site';
+---
+
+<BaseLayout
+  fullTitle={`Agendar consulta | Nutricionista em ${siteMeta.city}`}
+  description={`Agende consulta com ${siteMeta.professionalName}, nutricionista em ${siteMeta.city} e online. WhatsApp ${siteMeta.phoneDisplay}.`}
+>
+  <SeoArticle eyebrow="Contato" heading="Vamos conversar?">
+    <p>
+      Me chame no WhatsApp, conte um pouquinho sobre você, tire suas dúvidas e vamos
+      agendar juntos a consulta — presencial em {siteMeta.city} ou online.
+    </p>
+    <ul class="seo-contact">
+      <li>
+        <a href={whatsappHref()} target="_blank" rel="noreferrer">WhatsApp {siteMeta.phoneDisplay}</a>
+      </li>
+      <li>
+        <a href={phoneHref()}>{siteMeta.phoneDisplay}</a>
+      </li>
+      <li>
+        <a href={instagramHref()} target="_blank" rel="noreferrer">@{siteMeta.instagramHandle}</a>
+      </li>
+      <li>{siteMeta.city}, {siteMeta.region} · atendimento online</li>
+      <li>{siteMeta.professionalName} · {siteMeta.crn}</li>
+    </ul>
+  </SeoArticle>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SeoArticle from '../components/SeoArticle.astro';
+import { services } from '../lib/content';
+import { siteMeta } from '../lib/site';
+---
+
+<BaseLayout
+  fullTitle={`Serviços de nutrição clínica | ${siteMeta.professionalName} · ${siteMeta.city}`}
+  description={`Consulta, avaliação, gestantes, dieta flexível e acompanhamento com ${siteMeta.professionalName} em ${siteMeta.city} e online.`}
+>
+  <SeoArticle eyebrow="Serviços" heading="Nutrição clínica em Florianópolis e online">
+    <p>
+      Da primeira consulta ao acompanhamento no app. Cada serviço faz parte de um
+      protocolo contínuo — não de uma dieta isolada. Atendo presencialmente em
+      {siteMeta.city} e online, de onde você estiver.
+    </p>
+    {services.map((item) => (
+      <section>
+        <h2>{item.name}</h2>
+        <p>{item.desc}</p>
+      </section>
+    ))}
+  </SeoArticle>
+</BaseLayout>

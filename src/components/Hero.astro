@@ -26,15 +26,16 @@ const base = import.meta.env.BASE_URL;
   </div>
   <div class="hero-vignette" aria-hidden="true"></div>
   <div class="hero-copy">
-    <h1>
-      <img
-        class="hero-logo"
-        src={`${base}images/logo-left.svg`}
-        alt={siteMeta.name}
-        width="467"
-        height="104"
-      />
+    <h1 class="sr-only">
+      {siteMeta.professionalName}, nutricionista clínica em {siteMeta.city}
     </h1>
+    <img
+      class="hero-logo"
+      src={`${base}images/logo-left.svg`}
+      alt=""
+      width="467"
+      height="104"
+    />
     <p class="hero-desc">
       Você não precisa abrir mão do que ama para ter resultados. Planos que
       respeitam a sua rotina, paladar e o que o seu corpo precisa.

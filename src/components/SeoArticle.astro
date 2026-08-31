@@ -1,0 +1,35 @@
+---
+import { seoPages } from '../lib/content';
+import { whatsappHref } from '../lib/site';
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+}
+
+const { eyebrow, heading } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const current = Astro.url.pathname.split('/').filter(Boolean).pop();
+---
+
+<section class="seo-page">
+  <div class="seo-page-inner">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="section-title">{heading}</h1>
+    <div class="seo-prose">
+      <slot />
+    </div>
+    <p class="seo-cta">
+      <a class="btn-solid" href={whatsappHref()} target="_blank" rel="noreferrer">
+        Agendar consulta
+      </a>
+    </p>
+    <nav class="seo-more" aria-label="Outras páginas">
+      {seoPages
+        .filter((page) => page.href.replace(/\/$/, '') !== current)
+        .map((page) => (
+          <a href={`${base}${page.href}`}>{page.label}</a>
+        ))}
+    </nav>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SeoArticle from '../components/SeoArticle.astro';
+import { siteMeta } from '../lib/site';
+---
+
+<BaseLayout
+  fullTitle={`${siteMeta.professionalName} | Nutricionista em ${siteMeta.city} e online`}
+  description={`${siteMeta.professionalName} é nutricionista clínica em ${siteMeta.city} (${siteMeta.crn}). Atendimento presencial e online, com planos montados junto com o paciente.`}
+>
+  <SeoArticle eyebrow="Sobre" heading={`${siteMeta.professionalName}, nutricionista em ${siteMeta.city}`}>
+    <p>
+      Sou nutricionista clínica em {siteMeta.city}. Também atendo de forma remota, para quem está
+      em outra cidade ou em outro país — o cuidado e o método são os mesmos.
+    </p>
+    <p>
+      Meus pacientes aprendem que se alimentar vai muito além da dieta da vez. Nutrição
+      significa ter energia e saúde para viver o agora e garantir o bem-estar futuro.
+    </p>
+    <p>
+      A consulta é um ambiente de acolhimento. Cada plano é montado em conjunto com o
+      paciente, sua rotina, o que gosta ou não de comer e, principalmente, o que o corpo
+      está pedindo.
+    </p>
+    <p>
+      O acompanhamento é próximo e diário, por meio de um app. O que eu proponho é uma
+      nova relação com a comida: ciência, prazer e consistência no cotidiano.
+    </p>
+    <p>
+      {siteMeta.professionalName} · Nutricionista · {siteMeta.crn}
+    </p>
+  </SeoArticle>
+</BaseLayout>
