@@ -1,6 +1,7 @@
 export const siteMeta = {
   name: 'Carol Nutri',
   professionalName: 'Carol Agostini',
+  crn: 'CRN-10 9424',
   tagline: 'Nutrição clínica personalizada.',
   description:
     'Nutrição clínica com a nutricionista Carol Agostini. Planos que respeitam a sua rotina, o seu paladar e o que o corpo precisa agora.',
