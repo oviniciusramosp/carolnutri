@@ -1525,7 +1525,8 @@ html.is-nav-menu-open {
 }
 
 .footer-top {
-  padding: 4rem var(--page-inset);
+  --footer-pad-y: 4rem;
+  padding: var(--footer-pad-y) var(--page-inset);
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 1fr);
   gap: 3rem;
@@ -1759,16 +1760,6 @@ html.is-nav-menu-open {
   .presence-globe {
     width: min(24rem, 88vw);
   }
-  .presence-pin-label {
-    display: none;
-  }
-  .presence-pin.is-labeled .presence-pin-mark {
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 50%;
-    rotate: 0deg;
-    translate: 0 0;
-  }
 
   .nav-brand { display: none; }
   .nav-links { display: none; }
@@ -1962,6 +1953,18 @@ html.is-nav-menu-open {
       rgb(from var(--color-mist) r g b / 0.55) 42%,
       rgb(from var(--color-mist) r g b / 0) 74%
     );
+    text-align: center;
+    justify-items: center;
+  }
+  .booking-box .eyebrow {
+    justify-content: center;
+  }
+  .booking-box .eyebrow::after {
+    content: "";
+    flex: 0 0 2.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
   }
 
   .site-nav {
@@ -2013,9 +2016,21 @@ html.is-nav-menu-open {
     align-items: flex-start;
   }
   .footer-top {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "brand brand"
+      "nav contact";
+    gap: var(--footer-pad-y) 1.5rem;
     text-align: center;
+  }
+  .footer-brand-col {
+    grid-area: brand;
+  }
+  .footer-nav-col {
+    grid-area: nav;
+  }
+  .footer-contact-col {
+    grid-area: contact;
   }
   .footer-col ul {
     align-items: center;
