@@ -2,7 +2,7 @@
 import { academyMarks, partners } from '../../lib/content';
 
 const base = import.meta.env.BASE_URL;
-const partnerOrder = ['Essential', 'Sycl', 'Legítima', 'Daniela Leal'] as const;
+const partnerOrder = ['Essential', 'Caffeine Army', 'Sycl', 'Legítima', 'Daniela Leal'] as const;
 const partnerMarks = partnerOrder.map(
   (name) => partners.find((partner) => partner.name === name),
 ).filter((partner): partner is (typeof partners)[number] => Boolean(partner));
