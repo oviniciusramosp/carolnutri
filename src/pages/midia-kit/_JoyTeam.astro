@@ -1,0 +1,226 @@
+---
+const base = import.meta.env.BASE_URL;
+
+const members = [
+  {
+    name: 'Maria Júlia',
+    role: 'Estrategista de Conteúdo',
+    image: {
+      src: 'images/team-maria',
+      alt: 'Retrato de Maria Júlia',
+      width: 800,
+      height: 759,
+    },
+  },
+  {
+    name: 'Victória',
+    role: 'Designer',
+    image: {
+      src: 'images/team-victoria',
+      alt: 'Retrato de Victória',
+      width: 800,
+      height: 759,
+    },
+  },
+  {
+    name: 'Vinícius',
+    role: 'Comercial e Desenvolvedor',
+    image: {
+      src: 'images/team-vinicius',
+      alt: 'Retrato de Vinícius',
+      width: 800,
+      height: 759,
+    },
+  },
+] as const;
+---
+
+<section
+  class="joy-team"
+  id="joy-team"
+  data-joy-section
+  data-joy-tone="light"
+  aria-labelledby="joy-team-title"
+>
+  <div class="joy-team-inner">
+    <header class="joy-team-head" data-reveal>
+      <p class="eyebrow">Minha Equipe</p>
+      <h2 id="joy-team-title" class="section-title">
+        Pessoas que trabalham comigo para <em>aumentar o impacto</em> das minhas consultas
+      </h2>
+    </header>
+
+    <div class="joy-team-track-wrap" data-drag-scroll>
+      <div class="joy-team-track" data-reveal-group>
+        {members.map((member) => (
+          <article class="joy-member">
+            <div class="joy-member-media">
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={`${base}${member.image.src}-400.webp 400w, ${base}${member.image.src}-800.webp 800w`}
+                  sizes="(max-width: 64rem) 16rem, 16rem"
+                />
+                <img
+                  src={`${base}${member.image.src}-800.jpg`}
+                  srcset={`${base}${member.image.src}-400.jpg 400w, ${base}${member.image.src}-800.jpg 800w`}
+                  sizes="(max-width: 64rem) 16rem, 16rem"
+                  alt={member.image.alt}
+                  width={member.image.width}
+                  height={member.image.height}
+                  loading="lazy"
+                  draggable="false"
+                />
+              </picture>
+            </div>
+            <h3 class="joy-member-name">{member.name}</h3>
+            <p class="joy-member-role">{member.role}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .joy-team {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    background: var(--color-white);
+    color: var(--color-coffee);
+    padding: clamp(4.5rem, 10vw, 7.5rem) clamp(1.5rem, 6vw, 5rem);
+  }
+
+  .joy-team-inner {
+    max-width: 48rem;
+    width: 100%;
+    min-width: 0;
+    margin-inline: auto;
+  }
+
+  .joy-team-head {
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .joy-team-track {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 2.2vw, 1.75rem);
+  }
+
+  .joy-member {
+    margin: 0;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .joy-member-media {
+    overflow: hidden;
+    border-radius: 1.25rem;
+    aspect-ratio: 800 / 759;
+    background: var(--color-taupe);
+  }
+
+  .joy-member-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .joy-member-name {
+    margin: 1rem 0 0;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-coffee);
+  }
+
+  .joy-member-role {
+    margin: 0.35rem 0 0;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-chocolate);
+  }
+
+  @media (max-width: 64rem) {
+    .joy-team-track-wrap {
+      overflow-x: auto;
+      overflow-y: hidden;
+      min-width: 0;
+      margin-inline: calc(-1 * var(--page-gutter));
+      padding-inline: var(--page-gutter);
+      scrollbar-width: none;
+      cursor: grab;
+      touch-action: pan-x;
+      overscroll-behavior-x: contain;
+      user-select: none;
+    }
+
+    .joy-team-track-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .joy-team-track-wrap.is-dragging {
+      cursor: grabbing;
+    }
+
+    .joy-team-track {
+      display: flex;
+      width: max-content;
+      max-width: none;
+      gap: 0.75rem;
+    }
+
+    .joy-member {
+      flex: 0 0 min(16rem, 72vw);
+    }
+  }
+</style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('.joy-team-track-wrap');
+  const mobile = window.matchMedia('(max-width: 64rem)');
+
+  if (wrap) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    wrap.addEventListener('dragstart', (event) => {
+      event.preventDefault();
+    });
+
+    wrap.addEventListener('pointerdown', (event) => {
+      if (!mobile.matches) return;
+      isDown = true;
+      wrap.classList.add('is-dragging');
+      startX = event.pageX - wrap.offsetLeft;
+      scrollLeft = wrap.scrollLeft;
+      wrap.setPointerCapture(event.pointerId);
+    });
+
+    const stopDrag = () => {
+      isDown = false;
+      wrap.classList.remove('is-dragging');
+    };
+
+    wrap.addEventListener('pointerup', stopDrag);
+    wrap.addEventListener('pointercancel', stopDrag);
+    wrap.addEventListener('pointermove', (event) => {
+      if (!isDown) return;
+      event.preventDefault();
+      wrap.scrollLeft = scrollLeft - (event.pageX - wrap.offsetLeft - startX);
+    });
+  }
+</script>

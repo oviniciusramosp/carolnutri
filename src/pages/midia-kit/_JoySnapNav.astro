@@ -1,0 +1,88 @@
+---
+const items = [
+  { href: '#joy-hero', label: 'Cover' },
+  { href: '#joy-patients', label: 'Público' },
+  { href: '#joy-methods', label: 'Métodos' },
+  { href: '#joy-app', label: 'App' },
+  { href: '#joy-team', label: 'Equipe' },
+  { href: '#joy-connection', label: 'Conexão' },
+  { href: '#joy-experience', label: 'Experiência' },
+] as const;
+---
+
+<nav class="joy-snap-nav" data-on="dark" aria-label="Seções">
+  <ul class="joy-snap-list">
+    {items.map((item, i) => (
+      <li>
+        <a
+          class:list={['joy-snap-link', i === 0 && 'is-active']}
+          href={item.href}
+          data-joy-snap
+          aria-current={i === 0 ? 'true' : undefined}
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .joy-snap-nav {
+    position: fixed;
+    top: calc(clamp(1.5rem, 4vw, 2.75rem) + env(safe-area-inset-top, 0px));
+    right: calc(var(--page-gutter) + env(safe-area-inset-right, 0px));
+    z-index: 5;
+    margin: 0;
+    color: var(--color-joy-mark);
+    pointer-events: none;
+  }
+
+  .joy-snap-nav[data-on='light'] {
+    color: var(--color-coffee);
+  }
+
+  .joy-snap-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: right;
+    pointer-events: auto;
+  }
+
+  .joy-snap-list li + li {
+    margin-top: 0.5rem;
+  }
+
+  .joy-snap-link {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.625rem;
+    font-weight: 300;
+    letter-spacing: 0.5em;
+    margin-inline-end: -0.5em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: inherit;
+    opacity: 0.4;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .joy-snap-link.is-active,
+  .joy-snap-link:hover,
+  .joy-snap-link:focus-visible {
+    opacity: 1;
+  }
+
+  .joy-snap-link:focus-visible {
+    outline: 0.0625rem solid currentColor;
+    outline-offset: 0.25rem;
+  }
+
+  @media (max-width: 48rem) {
+    .joy-snap-nav {
+      display: none;
+    }
+  }
+</style>

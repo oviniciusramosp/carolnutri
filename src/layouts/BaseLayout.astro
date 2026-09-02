@@ -14,6 +14,10 @@ interface Props {
   footer?: boolean;
   index?: boolean;
   preloadHero?: boolean;
+  ogImage?: string;
+  ogAlt?: string;
+  viewportFitCover?: boolean;
+  themeColor?: string;
 }
 
 const {
@@ -25,13 +29,20 @@ const {
   footer = true,
   index = true,
   preloadHero = false,
+  ogImage: ogImageFile = 'images/og.jpg',
+  ogAlt = `${siteMeta.professionalName}, nutricionista em ${siteMeta.city}`,
+  viewportFitCover = false,
+  themeColor = '#2f2e2c',
 } = Astro.props;
+const viewport = viewportFitCover
+  ? 'width=device-width, initial-scale=1, viewport-fit=cover'
+  : 'width=device-width, initial-scale=1';
 const pageTitle = fullTitle ?? (title ? `${title} · ${siteMeta.name}` : siteMeta.title);
 const canonical = Astro.site
   ? new URL(Astro.url.pathname, Astro.site).href
   : siteOrigin + '/';
 const base = import.meta.env.BASE_URL;
-const ogImage = ogImageUrl();
+const ogImage = ogImageUrl(ogImageFile);
 const structuredData = jsonLdGraph(canonical, {
   name: pageTitle,
   description,
@@ -42,9 +53,12 @@ const structuredData = jsonLdGraph(canonical, {
 <html lang="pt-BR" class:list={[intro && 'has-hero']}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content={viewport} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#2f2e2c" />
+    <meta name="theme-color" content={themeColor} />
+    {viewportFitCover && (
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    )}
     {index ? (
       <meta name="robots" content="index, follow" />
     ) : (
@@ -80,7 +94,7 @@ const structuredData = jsonLdGraph(canonical, {
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${siteMeta.professionalName}, nutricionista em ${siteMeta.city}`} />
+    <meta property="og:image:alt" content={ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />

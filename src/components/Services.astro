@@ -111,9 +111,23 @@ const base = import.meta.env.BASE_URL;
     });
 
     const updateNav = () => {
-      const max = wrap.scrollWidth - wrap.clientWidth;
-      if (prevBtn) prevBtn.disabled = wrap.scrollLeft <= 2;
-      if (nextBtn) nextBtn.disabled = wrap.scrollLeft >= max - 2;
+      const cards = [...wrap.querySelectorAll<HTMLElement>('.service-card')];
+      const wrapRect = wrap.getBoundingClientRect();
+      const first = cards[0]?.getBoundingClientRect();
+      const last = cards.at(-1)?.getBoundingClientRect();
+      // Padding on the track is part of scrollWidth, so empty inset can
+      // still "overflow" after every card is already on screen.
+      const canScrollPrev = Boolean(first && first.left < wrapRect.left - 2);
+      const canScrollNext = Boolean(last && last.right > wrapRect.right + 2);
+      const canScroll = canScrollPrev || canScrollNext;
+      if (prevBtn) {
+        prevBtn.hidden = !canScroll;
+        prevBtn.disabled = !canScrollPrev;
+      }
+      if (nextBtn) {
+        nextBtn.hidden = !canScroll;
+        nextBtn.disabled = !canScrollNext;
+      }
     };
 
     const scrollToNeighbor = (dir: 1 | -1) => {
@@ -137,6 +151,7 @@ const base = import.meta.env.BASE_URL;
     nextBtn?.addEventListener('click', () => scrollToNeighbor(1));
     wrap.addEventListener('scroll', updateNav, { passive: true });
     window.addEventListener('resize', updateNav);
+    new ResizeObserver(updateNav).observe(wrap);
     updateNav();
   }
 </script>

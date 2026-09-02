@@ -355,7 +355,7 @@ html.is-nav-menu-open {
   font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(1.875rem, 3.2vw, 3rem);
-  line-height: 1.15;
+  line-height: 1.38;
   color: var(--color-coffee);
   text-wrap: balance;
 }
@@ -366,6 +366,7 @@ html.is-nav-menu-open {
   font-weight: 300;
   /* Fraunces italic "o" is ~20% shorter than Inter's at title size. */
   font-size: 1.2em;
+  line-height: 1;
   color: var(--color-latte);
 }
 
@@ -556,7 +557,7 @@ html.is-nav-menu-open {
   }
 
   html.has-hero:not(.is-skip-intro) .hero-copy > * {
-    animation: rise-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rise-in 1.35s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   html.has-hero:not(.is-skip-intro) .hero-copy .hero-logo {
@@ -864,6 +865,10 @@ html.is-nav-menu-open {
 .services-nav-btn:disabled {
   opacity: 0.32;
   cursor: default;
+}
+
+.services-nav-btn[hidden] {
+  display: none;
 }
 
 .services-track {
@@ -1623,10 +1628,12 @@ html.is-nav-menu-open {
 @keyframes rise-in {
   from {
     opacity: 0;
+    filter: blur(1.5rem);
     transform: translateY(1.25rem);
   }
   to {
     opacity: 1;
+    filter: blur(0);
     transform: none;
   }
 }
@@ -1638,13 +1645,15 @@ html.is-nav-menu-open {
 
 /* ——— Scroll reveal ———
    Visible by default so a slow JS parse never blanks the page.
-   PageMotion adds is-pending only to off-screen nodes. */
+   PageMotion adds is-pending only to off-screen nodes.
+   Blur + fade matches the Joy media-kit entrance. */
 [data-reveal],
 [data-reveal-group] > * {
   transition:
-    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: min(calc(var(--reveal-i, 0) * 80ms), 280ms);
+    opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.35s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: min(calc(var(--reveal-i, 0) * 140ms), 560ms);
 }
 
 [data-reveal-group] > *:nth-child(1) { --reveal-i: 0; }
@@ -1657,21 +1666,25 @@ html.is-nav-menu-open {
 [data-reveal].is-pending,
 [data-reveal-group].is-pending > * {
   opacity: 0;
+  filter: blur(1.5rem);
   transform: translateY(1.5rem);
 }
 
 [data-reveal].is-revealed,
 [data-reveal-group].is-revealed > * {
   opacity: 1;
+  filter: blur(0);
   transform: none;
 }
 
 .services-track[data-reveal-group] > .service-card {
   transition:
-    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.35s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.35s cubic-bezier(0.16, 1, 0.3, 1),
     width 400ms ease;
   transition-delay:
+    calc(var(--reveal-i, 0) * 140ms),
     calc(var(--reveal-i, 0) * 140ms),
     calc(var(--reveal-i, 0) * 140ms),
     0ms;
@@ -1694,6 +1707,7 @@ html.is-nav-menu-open {
   [data-reveal].is-pending,
   [data-reveal-group].is-pending > * {
     opacity: 1;
+    filter: none;
     transform: none;
     transition: none;
   }

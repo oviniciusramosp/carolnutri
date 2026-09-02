@@ -1,0 +1,1216 @@
+---
+const base = import.meta.env.BASE_URL;
+
+const features = [
+  { id: 'feed', label: 'Feed de receitas, vídeos e artigos' },
+  { id: 'dieta', label: 'Dieta flexível com substituições' },
+  { id: 'enjoei', label: 'Função “Enjoei”' },
+  { id: 'metas', label: 'Checklist de metas' },
+  { id: 'diario', label: 'Diário alimentar' },
+  { id: 'ia', label: 'IA para ajudar em restaurantes e mercados' },
+] as const;
+
+const shots = [
+  {
+    id: 'feed',
+    file: 'app-feed',
+    alt: 'Feed do app com Apple Health, conteúdo e artigos',
+  },
+  {
+    id: 'dieta',
+    file: 'app-dieta',
+    alt: 'Jantar com grupos de equivalência e substituições',
+  },
+  {
+    id: 'diario',
+    file: 'app-diario',
+    alt: 'Diário alimentar com fotos das refeições',
+  },
+  {
+    id: 'metas',
+    file: 'app-metas',
+    alt: 'Checklist de metas de julho',
+  },
+] as const;
+
+const substRows = [
+  { name: 'Peito de frango grelhado', measure: '120 g', current: true, on: false },
+  { name: 'Peito de peru', measure: '130 g', current: false, on: false },
+  { name: 'Ovos mexidos', measure: '3 unidades', current: false, on: true },
+  { name: 'Tofu grelhado', measure: '140 g', current: false, on: false },
+] as const;
+---
+
+<section
+  class="joy-app"
+  id="joy-app"
+  data-joy-section
+  data-joy-tone="light"
+  aria-labelledby="joy-app-title"
+  data-active="feed"
+>
+  <div class="joy-app-inner">
+    <header class="joy-app-head" data-reveal>
+      <p class="eyebrow">Tecnologia Própria</p>
+      <h2 id="joy-app-title" class="section-title">
+        Um app <em>desenhado por mim</em>
+      </h2>
+      <p class="joy-app-lead">
+        Em Novembro lanço um app para levar o meu <em>acompanhamento</em> a um <em>novo nível</em>. O app contará com integração à <em>Apple Intelligence</em>, ao <em>Apple Watch</em> e está sendo desenvolvido por um dos desenvolvedores reconhecidos pela Apple em 2026.
+      </p>
+    </header>
+
+    <div class="joy-app-stage" data-reveal>
+      <div class="joy-app-orbit" role="tablist" aria-label="Funções do aplicativo">
+        {features.map((f) => (
+          <button
+            class:list={['joy-app-chip', f.id === 'feed' && 'is-active']}
+            type="button"
+            role="tab"
+            id={`joy-tab-${f.id}`}
+            data-feature={f.id}
+            aria-selected={f.id === 'feed' ? 'true' : 'false'}
+            aria-controls={`joy-pane-${f.id}`}
+          >
+            <span class="joy-app-chip-label">{f.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="joy-app-phone-row">
+        <button
+          class="joy-app-arrow joy-app-arrow-prev"
+          type="button"
+          aria-label="Função anterior"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+      <figure class="joy-phone" aria-label="Mockup do aplicativo">
+        <div class="joy-phone-screen">
+            <div class="joy-phone-panes">
+              {shots.map((shot) => (
+                <div
+                  class:list={['joy-phone-pane', 'joy-phone-pane-shot', shot.id === 'feed' && 'is-active']}
+                  id={`joy-pane-${shot.id}`}
+                  data-pane={shot.id}
+                  role="tabpanel"
+                  aria-labelledby={`joy-tab-${shot.id}`}
+                  inert={shot.id === 'feed' ? undefined : true}
+                >
+                  <picture>
+                    <source
+                      type="image/webp"
+                      srcset={`${base}images/${shot.file}-400.webp 400w, ${base}images/${shot.file}-660.webp 660w`}
+                      sizes="(max-width: 48rem) 40vw, 18rem"
+                    />
+                    <img
+                      class="joy-phone-shot"
+                      src={`${base}images/${shot.file}-660.jpg`}
+                      srcset={`${base}images/${shot.file}-400.jpg 400w, ${base}images/${shot.file}-660.jpg 660w`}
+                      sizes="(max-width: 48rem) 40vw, 18rem"
+                      alt={shot.alt}
+                      width="660"
+                      height="1434"
+                      loading={shot.id === 'feed' ? 'eager' : 'lazy'}
+                      draggable="false"
+                    />
+                  </picture>
+                </div>
+              ))}
+
+
+              {/* ——— Enjoei ——— */}
+              <div
+                class="joy-phone-pane"
+                id="joy-pane-enjoei"
+                data-pane="enjoei"
+                role="tabpanel"
+                aria-labelledby="joy-tab-enjoei"
+                inert
+              >
+                <div class="app-pad app-scroll app-dim">
+                  <div class="app-nav">
+                    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <p class="app-display app-display-sm">Almoço</p>
+                  </div>
+                  <p class="app-eyebrow">Alimentos</p>
+                  <div class="app-card">
+                    <p class="app-date">Proteína · 1 porção</p>
+                    <p class="app-card-title app-strike">Peito de frango grelhado</p>
+                    <p class="app-card-body">120 g</p>
+                    <span class="app-pill-enjoei">Enjoei</span>
+                  </div>
+                  <div class="app-card">
+                    <p class="app-date">Carboidrato · 2 porções</p>
+                    <p class="app-card-title">Arroz branco</p>
+                    <p class="app-card-body">6 colheres de sopa</p>
+                  </div>
+                </div>
+                <div class="app-sheet" aria-hidden="true">
+                  <div class="app-grabber"></div>
+                  <p class="app-sheet-title">Substituições</p>
+                  <p class="app-sheet-sub">1 porção · proteína</p>
+                  <p class="app-eyebrow">Sugestões da Nutri</p>
+                  {substRows.map((row) => (
+                    <div class:list={['app-subst', row.on && 'is-on']}>
+                      <div>
+                        <p class="app-subst-name">{row.name}</p>
+                        <p class="app-subst-measure">{row.measure}{row.current ? ' · atual' : ''}</p>
+                      </div>
+                      {row.on && (
+                        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8.2 6.4 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      )}
+                    </div>
+                  ))}
+                  <div class="app-sheet-btn">Salvar</div>
+                </div>
+              </div>
+
+              {/* ——— IA ——— */}
+              <div
+                class="joy-phone-pane"
+                id="joy-pane-ia"
+                data-pane="ia"
+                role="tabpanel"
+                aria-labelledby="joy-tab-ia"
+                inert
+              >
+                <div class="app-ia">
+                  <div class="app-ia-glow" aria-hidden="true"></div>
+                  <div class="app-ia-brand">
+                    <svg class="app-spark" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                      <path d="M12 2.2 13.4 8.6 20 10 13.4 11.4 12 17.8 10.6 11.4 4 10 10.6 8.6Z" fill="currentColor"/>
+                    </svg>
+                    Apple Intelligence
+                  </div>
+                  <div class="app-ia-modes">
+                    <span class="is-on">Restaurante</span>
+                    <span>Mercado</span>
+                  </div>
+                  <div class="app-bubble app-bubble-me">Estou no japonês. O que pede no meu plano?</div>
+                  <div class="app-bubble app-bubble-ai">
+                    <p class="app-card-title">No almoço de hoje</p>
+                    <ul>
+                      <li><strong>Sashimi de salmão</strong> — 2 porções de proteína</li>
+                      <li><strong>Salada de algas</strong> — vegetais livres</li>
+                      <li><strong>Arroz</strong> — o carbo do almoço</li>
+                    </ul>
+                    <p class="app-card-body">Deixa o tempurá. A troca já está no grupo.</p>
+                  </div>
+                  <div class="app-bubble app-bubble-me">E no mercado — enjoei do iogurte grego.</div>
+                  <div class="app-bubble app-bubble-ai">
+                    <p class="app-card-title">Mesmo grupo</p>
+                    <p class="app-card-body">Coalhada, skyr ou kefir. Mesma porção, mesma proteína.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <picture class="joy-phone-frame">
+          <source type="image/webp" srcset={`${base}images/iphone-frame.webp`} />
+          <img
+            src={`${base}images/iphone-frame.png`}
+            alt=""
+            width="980"
+            height="2000"
+            draggable="false"
+          />
+        </picture>
+      </figure>
+        <button
+          class="joy-app-arrow joy-app-arrow-next"
+          type="button"
+          aria-label="Próxima função"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="joy-app-pager">
+        <div class="joy-app-captions" aria-live="polite">
+          {features.map((f) => (
+            <p
+              class:list={['joy-app-caption', f.id === 'feed' && 'is-active']}
+              data-caption={f.id}
+            >
+              {f.label}
+            </p>
+          ))}
+        </div>
+        <div class="joy-app-dots" role="tablist" aria-label="Funções do aplicativo">
+          {features.map((f) => (
+            <button
+              class:list={['joy-app-dot', f.id === 'feed' && 'is-active']}
+              type="button"
+              role="tab"
+              data-feature={f.id}
+              aria-label={f.label}
+              aria-selected={f.id === 'feed' ? 'true' : 'false'}
+              aria-controls={`joy-pane-${f.id}`}
+            >
+              <span class="joy-app-dot-fill" aria-hidden="true"></span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .joy-app {
+    --frame-w: 980;
+    --frame-h: 2000;
+    --screen-w: 880;
+    --screen-ref: 978;
+    --screen-h: 1910;
+    --joy-app-beat: 4.5s;
+    background: var(--color-taupe);
+    color: var(--color-coffee);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    height: 100svh;
+    padding: clamp(4.5rem, 10vw, 7.5rem) clamp(1.5rem, 6vw, 5rem);
+  }
+
+  .joy-app-inner {
+    max-width: 80rem;
+    width: 100%;
+    margin-inline: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.75fr) minmax(0, 1.25fr);
+    grid-template-areas: "copy stage";
+    column-gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  .joy-app-head {
+    grid-area: copy;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    min-width: 0;
+  }
+
+  .joy-app-head .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  .joy-app-head .section-title {
+    margin: 0;
+  }
+
+  .joy-app-lead {
+    margin: 1.25rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(0.9375rem, 1.3vw, 1.0625rem);
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--color-chocolate);
+    text-wrap: balance;
+  }
+
+  .joy-app-lead em {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 600;
+    color: var(--color-terracota);
+  }
+
+  .joy-app-stage {
+    grid-area: stage;
+    position: relative;
+    isolation: isolate;
+    min-height: 0;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(10rem, 1fr);
+    grid-template-areas: "phone rails";
+    align-items: center;
+    container-type: size;
+    --phone-h: min(100cqh, 42rem);
+    --phone-w: calc(var(--phone-h) * var(--frame-w) / var(--frame-h));
+  }
+
+  .joy-app-orbit {
+    grid-area: rails;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: var(--phone-h);
+    min-width: 0;
+    pointer-events: none;
+  }
+
+  .joy-app-chip[data-feature='feed'] {
+    --line: 86%;
+  }
+  .joy-app-chip[data-feature='dieta'] {
+    --line: 57%;
+  }
+  .joy-app-chip[data-feature='enjoei'] {
+    --line: 73%;
+  }
+  .joy-app-chip[data-feature='metas'] {
+    --line: 48%;
+  }
+  .joy-app-chip[data-feature='diario'] {
+    --line: 64%;
+  }
+  .joy-app-chip[data-feature='ia'] {
+    --line: 91%;
+  }
+
+  .joy-app-chip {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    align-self: flex-start;
+    gap: 0.45rem;
+    box-sizing: border-box;
+    width: clamp(10.5rem, var(--line), 100%);
+    margin: 0;
+    padding: 0 0 0 0.75rem;
+    border: 0;
+    background: none;
+    color: var(--color-coffee);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+    text-align: right;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .joy-app-chip-label {
+    display: block;
+    max-width: 14rem;
+    text-wrap: balance;
+  }
+
+  .joy-app-chip::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 0.0625rem;
+    background: currentColor;
+    opacity: 0.25;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .joy-app-chip:hover::after,
+  .joy-app-chip:focus-visible::after,
+  .joy-app-chip.is-active::after {
+    opacity: 1;
+  }
+
+  .joy-app-phone-row {
+    grid-area: phone;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: var(--phone-h);
+    min-height: 0;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .joy-app-arrow {
+    display: none;
+    appearance: none;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    color: var(--color-coffee);
+    background: color-mix(in srgb, var(--color-almond) 82%, transparent);
+    border: 0.0625rem solid color-mix(in srgb, var(--color-coffee) 18%, transparent);
+    box-shadow: 0 0.625rem 1.875rem color-mix(in srgb, var(--color-coffee) 12%, transparent);
+    backdrop-filter: blur(0.625rem);
+    cursor: pointer;
+    transition:
+      opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .joy-app-arrow svg {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .joy-app-arrow:hover:not(:disabled),
+  .joy-app-arrow:focus-visible:not(:disabled) {
+    background: var(--color-almond);
+    border-color: color-mix(in srgb, var(--color-coffee) 40%, transparent);
+  }
+
+  .joy-app-arrow:focus-visible {
+    outline: 0.0625rem solid var(--color-coffee);
+    outline-offset: 0.1875rem;
+  }
+
+  .joy-app-arrow:disabled {
+    opacity: 0.32;
+    cursor: default;
+  }
+
+  .joy-phone {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    width: auto;
+    aspect-ratio: 980 / 2000;
+    margin: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    filter: drop-shadow(0 1.75rem 2.75rem color-mix(in srgb, var(--color-ink) 18%, transparent));
+  }
+
+  .joy-phone img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  .joy-app-pager {
+    display: none;
+  }
+
+  .joy-phone-frame,
+  .joy-phone-frame img {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .joy-phone-screen {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    overflow: hidden;
+    width: calc(100% * var(--screen-w) / var(--screen-ref));
+    height: calc(100% * var(--screen-h) / var(--frame-h));
+    border-radius: calc(var(--phone-w) * var(--screen-w) / var(--screen-ref) * 0.142);
+    background: var(--color-taupe);
+    color: var(--color-coffee);
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+
+  .joy-phone-panes {
+    position: absolute;
+    inset: 0;
+  }
+
+  .joy-phone-pane-shot picture {
+    position: absolute;
+    inset: 0;
+  }
+
+  .joy-phone-shot {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .joy-phone-pane {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    filter: blur(0.6rem);
+    transform: translateY(0.35rem);
+    transition:
+      opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0.45s;
+  }
+
+  .joy-phone-pane.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    filter: blur(0);
+    transform: none;
+  }
+
+  /* ——— In-phone UI (Enjoei + IA) ——— */
+  .app-pad {
+    padding: 1.55rem 0.85rem 0.6rem;
+  }
+
+  .app-scroll {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .app-display {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.45rem;
+    line-height: 1.15;
+    color: var(--color-coffee);
+  }
+
+  .app-display-sm {
+    font-size: 1.15rem;
+  }
+
+  .app-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.55rem 0 0.4rem;
+    font-size: 0.48rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-latte);
+  }
+
+  .app-eyebrow::before {
+    content: "";
+    width: 1.4rem;
+    height: 0.05rem;
+    background: currentColor;
+  }
+
+  .app-card {
+    margin-top: 0.4rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: 0.7rem;
+    background: var(--color-almond);
+    box-shadow: inset 0 0 0 0.0625rem var(--color-white);
+  }
+
+  .app-date {
+    margin: 0;
+    font-size: 0.5rem;
+    color: var(--color-latte);
+  }
+
+  .app-card-title {
+    margin: 0.12rem 0 0;
+    font-size: 0.7rem;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--color-coffee);
+  }
+
+  .app-card-body {
+    margin: 0.15rem 0 0;
+    font-size: 0.58rem;
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--color-chocolate);
+  }
+
+  .app-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-chocolate);
+    margin-bottom: 0.5rem;
+  }
+
+  .app-strike {
+    text-decoration: line-through;
+    color: var(--color-latte);
+  }
+
+  .app-pill-enjoei {
+    display: inline-block;
+    margin-top: 0.4rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-mauve) 22%, var(--color-almond));
+    color: var(--color-mauve);
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .app-dim {
+    mask-image: linear-gradient(to bottom, rgb(0 0 0) 40%, transparent 88%);
+  }
+
+  .app-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.45rem 0.85rem 1.1rem;
+    border-radius: 1.1rem 1.1rem 0 0;
+    background: var(--color-almond);
+    box-shadow: 0 -0.75rem 2rem color-mix(in srgb, var(--color-ink) 10%, transparent);
+  }
+
+  .app-grabber {
+    width: 2.2rem;
+    height: 0.22rem;
+    margin: 0 auto 0.45rem;
+    border-radius: 999px;
+    background: var(--color-beige);
+  }
+
+  .app-sheet-title {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .app-sheet-sub {
+    margin: 0.15rem 0 0.2rem;
+    font-size: 0.52rem;
+    color: var(--color-latte);
+    text-align: center;
+  }
+
+  .app-subst {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    padding: 0.38rem 0.55rem;
+    border-radius: 999px;
+    color: var(--color-coffee);
+  }
+
+  .app-subst.is-on {
+    background: var(--color-taupe);
+    color: var(--color-chocolate);
+  }
+
+  .app-subst-name {
+    margin: 0;
+    font-size: 0.64rem;
+    font-weight: 500;
+  }
+
+  .app-subst-measure {
+    margin: 0.05rem 0 0;
+    font-size: 0.5rem;
+    color: var(--color-latte);
+  }
+
+  .app-sheet-btn {
+    margin-top: 0.45rem;
+    padding: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-coffee);
+    color: var(--color-almond);
+    font-size: 0.64rem;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .app-ia {
+    position: relative;
+    height: 100%;
+    padding: 1.55rem 0.85rem 0.6rem;
+    overflow: hidden;
+  }
+
+  .app-ia-glow {
+    position: absolute;
+    inset: -10% -20% auto;
+    height: 8rem;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-joy-2) 28%, transparent),
+      color-mix(in srgb, var(--color-joy-3) 35%, transparent),
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  .app-ia-brand {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-bottom: 0.45rem;
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-joy-2);
+  }
+
+  .app-spark {
+    color: var(--color-joy-2);
+  }
+
+  .app-ia-modes {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .app-ia-modes span {
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.52rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-latte);
+    box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--color-ink) 6%, transparent);
+  }
+
+  .app-ia-modes .is-on {
+    background: var(--color-coffee);
+    color: var(--color-almond);
+    box-shadow: none;
+  }
+
+  .app-bubble {
+    position: relative;
+    max-width: 92%;
+    margin: 0 0 0.4rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 0.85rem;
+    font-size: 0.6rem;
+    line-height: 1.4;
+  }
+
+  .app-bubble-me {
+    margin-left: auto;
+    background: var(--color-coffee);
+    color: var(--color-almond);
+    border-bottom-right-radius: 0.25rem;
+  }
+
+  .app-bubble-ai {
+    background: var(--color-almond);
+    box-shadow: inset 0 0 0 0.0625rem var(--color-white);
+    border-bottom-left-radius: 0.25rem;
+  }
+
+  .app-bubble-ai ul {
+    margin: 0.3rem 0 0;
+    padding: 0 0 0 0.85rem;
+  }
+
+  .app-bubble-ai li {
+    margin: 0.12rem 0;
+  }
+
+  .app-bubble-ai .app-card-title,
+  .app-bubble-ai .app-card-body {
+    margin-top: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .joy-app-head[data-reveal],
+    .joy-app-stage[data-reveal] {
+      filter: blur(1.5rem);
+      transition:
+        opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1.35s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 1.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .joy-app-head[data-reveal].is-revealed,
+    .joy-app-stage[data-reveal].is-revealed {
+      filter: blur(0);
+    }
+  }
+
+  @media (max-width: 64rem) {
+    .joy-app {
+      height: auto;
+      min-height: 100svh;
+    }
+
+    .joy-app-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      flex: 1 1 auto;
+      min-height: auto;
+      height: auto;
+    }
+
+    .joy-app-head {
+      margin-bottom: 2rem;
+    }
+
+    .joy-app-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      height: auto;
+      min-height: 0;
+      container-type: normal;
+      --phone-h: min(32rem, 58svh);
+    }
+
+    .joy-app-orbit {
+      display: none;
+    }
+
+    .joy-app-phone-row {
+      grid-area: auto;
+      flex: 0 0 auto;
+      width: 100%;
+    }
+
+    .joy-app-arrow {
+      display: flex;
+    }
+
+    .joy-phone {
+      flex: 0 0 auto;
+      touch-action: pan-y;
+    }
+
+    .joy-phone-pane {
+      transform: none;
+    }
+
+    .joy-app-pager {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      width: min(100%, 22rem);
+    }
+
+    .joy-app-captions {
+      display: grid;
+      width: 100%;
+      min-height: 2.4rem;
+    }
+
+    .joy-app-caption {
+      grid-area: 1 / 1;
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 0.6875rem;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      line-height: 1.4;
+      text-align: center;
+      text-transform: uppercase;
+      text-wrap: balance;
+      color: var(--color-coffee);
+      opacity: 0;
+      visibility: hidden;
+      filter: blur(0.6rem);
+      pointer-events: none;
+      transition:
+        opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.45s;
+    }
+
+    .joy-app-caption.is-active {
+      opacity: 1;
+      visibility: visible;
+      filter: blur(0);
+    }
+
+    .joy-app-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .joy-app-dot {
+      appearance: none;
+      position: relative;
+      flex: 0 0 auto;
+      overflow: hidden;
+      width: 0.375rem;
+      height: 0.25rem;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--color-coffee) 22%, transparent);
+      cursor: pointer;
+      transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .joy-app-dot.is-active {
+      width: 1.75rem;
+    }
+
+    .joy-app-dot-fill {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform: scaleX(0);
+      transform-origin: left center;
+      background: var(--color-coffee);
+      border-radius: inherit;
+    }
+
+    .joy-app-dot.is-active .joy-app-dot-fill {
+      animation: joy-app-dot-fill var(--joy-app-beat) linear forwards;
+    }
+
+    .joy-app.is-paused .joy-app-dot.is-active .joy-app-dot-fill {
+      animation-play-state: paused;
+    }
+
+    .joy-app-dot:focus-visible {
+      outline: 0.0625rem solid var(--color-coffee);
+      outline-offset: 0.1875rem;
+    }
+  }
+
+  @keyframes joy-app-dot-fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .joy-app-dot.is-active .joy-app-dot-fill {
+      animation: none;
+      transform: scaleX(1);
+    }
+  }
+
+  @media (max-width: 32rem) {
+    .joy-app-stage {
+      --phone-h: min(28rem, 52svh);
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.joy-app');
+  if (root) {
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('.joy-app-chip')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('.joy-app-dot')];
+    const captions = [...root.querySelectorAll<HTMLElement>('[data-caption]')];
+    const panes = [...root.querySelectorAll<HTMLElement>('.joy-phone-pane')];
+    const prevBtn = root.querySelector<HTMLButtonElement>('.joy-app-arrow-prev');
+    const nextBtn = root.querySelector<HTMLButtonElement>('.joy-app-arrow-next');
+    const stage = root.querySelector('.joy-app-stage');
+    const order = chips.map((chip) => chip.dataset.feature).filter((id): id is string => Boolean(id));
+    const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const mobile = window.matchMedia('(max-width: 64rem)');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const beatMs = 4500;
+    let pinned = root.dataset.active ?? 'feed';
+    const pausedBy = new Set<string>(['offscreen']);
+    let holdMs = 0;
+    let tickAt = 0;
+    let timer = 0;
+
+    function isPaused() {
+      return pausedBy.size > 0 || reduceMotion.matches;
+    }
+
+    function stopClock() {
+      window.clearTimeout(timer);
+      timer = 0;
+      if (tickAt) {
+        holdMs += performance.now() - tickAt;
+        tickAt = 0;
+      }
+    }
+
+    function startClock() {
+      if (isPaused() || tickAt) return;
+      const remaining = Math.max(16, beatMs - holdMs);
+      tickAt = performance.now();
+      timer = window.setTimeout(() => {
+        timer = 0;
+        tickAt = 0;
+        holdMs = 0;
+        go(1);
+      }, remaining);
+    }
+
+    function resetClock() {
+      window.clearTimeout(timer);
+      timer = 0;
+      tickAt = 0;
+      holdMs = 0;
+      startClock();
+    }
+
+    function setPaused(reason: string, on: boolean) {
+      if (on) pausedBy.add(reason);
+      else pausedBy.delete(reason);
+      root!.classList.toggle('is-paused', isPaused());
+      if (isPaused()) stopClock();
+      else startClock();
+    }
+
+    function restartFill() {
+      const fill = root!.querySelector<HTMLElement>('.joy-app-dot.is-active .joy-app-dot-fill');
+      if (!fill) return;
+      fill.style.animation = 'none';
+      void fill.offsetWidth;
+      fill.style.animation = '';
+    }
+
+    function show(id: string, restart = true) {
+      root!.dataset.active = id;
+      for (const chip of chips) {
+        const on = chip.dataset.feature === id;
+        chip.classList.toggle('is-active', on);
+        chip.setAttribute('aria-selected', String(on));
+      }
+      for (const dot of dots) {
+        const on = dot.dataset.feature === id;
+        dot.classList.toggle('is-active', on);
+        dot.setAttribute('aria-selected', String(on));
+      }
+      for (const caption of captions) {
+        caption.classList.toggle('is-active', caption.dataset.caption === id);
+      }
+      for (const pane of panes) {
+        const on = pane.dataset.pane === id;
+        pane.classList.toggle('is-active', on);
+        pane.toggleAttribute('inert', !on);
+      }
+      if (restart) {
+        restartFill();
+        resetClock();
+      }
+    }
+
+    function go(delta: number) {
+      const i = Math.max(0, order.indexOf(pinned));
+      const next = order[(i + delta + order.length) % order.length];
+      if (!next) return;
+      pinned = next;
+      show(next);
+    }
+
+    function hold(id: string) {
+      pinned = id;
+      show(id);
+    }
+
+    for (const chip of chips) {
+      const id = chip.dataset.feature;
+      if (!id) continue;
+      chip.addEventListener('pointerenter', () => {
+        if (fineHover.matches) show(id, false);
+      });
+      chip.addEventListener('focus', () => show(id, false));
+      chip.addEventListener('click', () => hold(id));
+    }
+
+    for (const dot of dots) {
+      const id = dot.dataset.feature;
+      if (!id) continue;
+      dot.addEventListener('click', () => hold(id));
+    }
+
+    prevBtn?.addEventListener('click', () => go(-1));
+    nextBtn?.addEventListener('click', () => go(1));
+    show(pinned);
+    root.classList.toggle('is-paused', isPaused());
+
+    stage?.addEventListener('pointerenter', () => setPaused('cursor', true));
+    stage?.addEventListener('pointerleave', () => {
+      setPaused('cursor', false);
+      if (fineHover.matches) show(pinned, false);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      setPaused('page', document.hidden);
+    });
+
+    const inView = new IntersectionObserver(
+      ([entry]) => setPaused('offscreen', !entry?.isIntersecting),
+      { threshold: 0.35 },
+    );
+    inView.observe(root);
+
+    const phone = root.querySelector<HTMLElement>('.joy-phone');
+    if (phone) {
+      let startX = 0;
+      let startY = 0;
+      let axis: 'x' | 'y' | null = null;
+      let tracking = false;
+
+      phone.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+      });
+
+      phone.addEventListener('pointerdown', (event) => {
+        if (!mobile.matches) return;
+        tracking = true;
+        startX = event.clientX;
+        startY = event.clientY;
+        axis = null;
+      });
+
+      phone.addEventListener('pointermove', (event) => {
+        if (!tracking) return;
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        if (!axis && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+          axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        }
+      });
+
+      const endSwipe = (event: PointerEvent) => {
+        if (!tracking) return;
+        if (axis === 'x') {
+          const dx = event.clientX - startX;
+          if (dx < -40) go(1);
+          else if (dx > 40) go(-1);
+        }
+        tracking = false;
+        axis = null;
+      };
+
+      phone.addEventListener('pointerup', endSwipe);
+      phone.addEventListener('pointercancel', endSwipe);
+    }
+  }
+</script>

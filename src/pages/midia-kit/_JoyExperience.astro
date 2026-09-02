@@ -1,0 +1,423 @@
+---
+import { academyMarks, partners } from '../../lib/content';
+
+const base = import.meta.env.BASE_URL;
+const partnerOrder = ['Essential', 'Sycl', 'Legítima', 'Daniela Leal'] as const;
+const partnerMarks = partnerOrder.map(
+  (name) => partners.find((partner) => partner.name === name),
+).filter((partner): partner is (typeof partners)[number] => Boolean(partner));
+const marqueeCopies = 4;
+
+const extraDegrees = [
+  'Exames laboratoriais na prática clínica',
+  'Nutrição vegetariana',
+  'Bioquímica (extensão)',
+  'Saúde gastrointestinal e microbiota',
+  'Antropometria',
+  'Emagrecimento saudável',
+  'Fitoterapia e suplementação',
+  'Saúde da mulher',
+  'Técnica dietética para consultório',
+  'Atuação do nutricionista em academias',
+] as const;
+---
+
+<section
+  class="joy-exp"
+  id="joy-experience"
+  data-joy-section
+  data-joy-tone="light"
+  aria-labelledby="joy-exp-title"
+>
+  <div class="joy-exp-inner">
+    <header class="joy-exp-head" data-reveal>
+      <h2 id="joy-exp-title" class="eyebrow">Experiência</h2>
+    </header>
+
+    <div class="joy-exp-bento" data-reveal-group>
+      <figure class="joy-exp-card joy-exp-photo">
+        <picture>
+          <source
+            type="image/webp"
+            srcset={`${base}images/carol-portrait-800.webp 800w, ${base}images/carol-portrait-1024.webp 1024w`}
+            sizes="(max-width: 64rem) 100vw, 40vw"
+          />
+          <img
+            src={`${base}images/carol-portrait-1024.jpg`}
+            srcset={`${base}images/carol-portrait-800.jpg 800w, ${base}images/carol-portrait-1024.jpg 1024w`}
+            sizes="(max-width: 64rem) 100vw, 40vw"
+            alt="Carol Agostini"
+            width="1024"
+            height="1536"
+            loading="lazy"
+            draggable="false"
+          />
+        </picture>
+      </figure>
+
+      <article class="joy-exp-card joy-exp-degrees">
+        <div class="joy-exp-block">
+          <p class="joy-exp-lead">
+            Formada pela <em>UFSC</em>, com <em>pós-graduação</em> em Nutrição Funcional e Fitoterapia.
+          </p>
+        </div>
+        <div class="joy-exp-block">
+          <p class="joy-exp-kicker">Outras Formações</p>
+          <ul class="joy-exp-pills">
+            {extraDegrees.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div class="joy-exp-block joy-exp-block-gyms">
+          <p class="joy-exp-kicker">Experiência em academias</p>
+          <ul class="joy-exp-gyms">
+            {academyMarks.map((mark) => (
+              <li
+                class="joy-exp-mark is-lg"
+                style={`--logo: url("${base}${mark.src}"); --mark-ratio: ${mark.width} / ${mark.height};`}
+              >
+                <span class="sr-only">{mark.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </article>
+
+      <article class="joy-exp-card joy-exp-partners">
+        <p class="joy-exp-kicker">Parceiros</p>
+        <ul class="sr-only">
+          {partnerMarks.map((partner) => (
+            <li>{partner.name}</li>
+          ))}
+        </ul>
+        <div class="joy-exp-marquee" aria-hidden="true">
+          <div class="joy-exp-marquee-track">
+            {Array.from({ length: marqueeCopies }, () => (
+              <div class="joy-exp-marquee-group">
+                {partnerMarks.map((partner) => (
+                  <div
+                    class="joy-exp-mark"
+                    style={`--logo: url("${base}${partner.src}"); --mark-ratio: ${partner.width} / ${partner.height};`}
+                  ></div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .joy-exp {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    background: var(--color-white);
+    color: var(--color-coffee);
+    padding: clamp(4.5rem, 10vw, 7.5rem) var(--page-gutter);
+  }
+
+  .joy-exp-inner {
+    max-width: 80rem;
+    width: 100%;
+    min-width: 0;
+    margin-inline: auto;
+  }
+
+  .joy-exp-head {
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .joy-exp-bento {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "photo photo degrees degrees degrees"
+      "photo photo partners partners partners";
+    gap: 0.75rem;
+    min-height: 36rem;
+  }
+
+  .joy-exp-card {
+    margin: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .joy-exp-card:not(.joy-exp-photo) {
+    box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--color-ink) 3%, transparent);
+    background: color-mix(in srgb, var(--color-taupe) 20%, transparent);
+  }
+
+  .joy-exp-photo {
+    grid-area: photo;
+    position: relative;
+    min-height: 0;
+    background: var(--color-coffee);
+  }
+
+  .joy-exp-photo img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 12%;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  .joy-exp-degrees {
+    --title-stack: 0.7rem;
+    --block-gap: 1.25rem;
+    grid-area: degrees;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--block-gap);
+    padding: clamp(1.25rem, 2.4vw, 1.75rem);
+  }
+
+  .joy-exp-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--title-stack);
+  }
+
+  .joy-exp-block-gyms {
+    gap: calc(var(--title-stack) * 2);
+    margin-top: calc(var(--block-gap) * 0.5);
+  }
+
+  .joy-exp-partners {
+    grid-area: partners;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: clamp(1.25rem, 2.4vw, 1.75rem) 0;
+    overflow: hidden;
+  }
+
+  .joy-exp-partners .joy-exp-kicker {
+    padding-inline: clamp(1.25rem, 2.4vw, 1.75rem);
+  }
+
+  .joy-exp-card .joy-exp-kicker {
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--color-latte);
+  }
+
+  .joy-exp-card .joy-exp-lead {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.875rem, 3.2vw, 3rem);
+    font-weight: 300;
+    line-height: 1.38;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    color: var(--color-coffee);
+  }
+
+  .joy-exp-card .joy-exp-lead em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.2em;
+    line-height: 1;
+    color: var(--color-latte);
+  }
+
+  .joy-exp-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .joy-exp-pills li {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.42em 0.75em 0.32em;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-coffee);
+  }
+
+  @media (min-width: 32.01rem) {
+    .joy-exp-pills li:nth-child(3n + 1) {
+      background: color-mix(in srgb, var(--color-ash) 65%, var(--color-joy-3));
+    }
+
+    .joy-exp-pills li:nth-child(3n + 2) {
+      background: color-mix(in srgb, var(--color-mist) 70%, var(--color-joy-3));
+    }
+
+    .joy-exp-pills li:nth-child(3n) {
+      background: color-mix(in srgb, var(--color-mauve) 32%, var(--color-joy-3));
+    }
+  }
+
+  .joy-exp-gyms {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .joy-exp-marquee {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      black 1.5rem,
+      black calc(100% - 1.5rem),
+      transparent
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      black 1.5rem,
+      black calc(100% - 1.5rem),
+      transparent
+    );
+  }
+
+  .joy-exp-marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: joy-exp-marquee 22s linear infinite;
+  }
+
+  .joy-exp-marquee:hover .joy-exp-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .joy-exp-marquee-group {
+    display: flex;
+    align-items: center;
+    gap: 2.75rem;
+    padding-inline-end: 2.75rem;
+    flex-shrink: 0;
+  }
+
+  .joy-exp-marquee-group .joy-exp-mark {
+    height: 5rem;
+    flex-shrink: 0;
+    max-width: none;
+  }
+
+  .joy-exp-mark {
+    display: block;
+    height: 1.75rem;
+    max-width: 100%;
+    aspect-ratio: var(--mark-ratio);
+    background-color: var(--color-latte);
+    -webkit-mask-image: var(--logo);
+    mask-image: var(--logo);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+  }
+
+  .joy-exp-mark.is-lg {
+    height: 2.8125rem;
+  }
+
+  @keyframes joy-exp-marquee {
+    from { transform: translateX(-25%); }
+    to { transform: translateX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .joy-exp-marquee-track {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 64rem) {
+    .joy-exp-bento {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+      grid-template-areas:
+        "photo photo"
+        "degrees degrees"
+        "partners partners";
+      min-height: 0;
+    }
+
+    .joy-exp-photo {
+      min-height: 22rem;
+    }
+  }
+
+  @media (max-width: 32rem) {
+    .joy-exp-bento {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "photo"
+        "degrees"
+        "partners";
+    }
+
+    .joy-exp-photo {
+      aspect-ratio: 1 / 1;
+      min-height: 0;
+    }
+
+    .joy-exp-photo img {
+      /* 36% of the source (nose) maps to the center of a 1:1 cover crop. */
+      object-position: 50% 8%;
+    }
+
+    .joy-exp-pills {
+      display: block;
+      list-style: disc;
+      padding-inline-start: 1.15rem;
+    }
+
+    .joy-exp-pills li {
+      display: list-item;
+      padding: 0;
+      border-radius: 0;
+      letter-spacing: 0;
+      line-height: 1.45;
+      text-transform: none;
+    }
+
+    .joy-exp-pills li + li {
+      margin-top: 0.4rem;
+    }
+
+    .joy-exp-pills li::marker {
+      color: var(--color-latte);
+    }
+  }
+</style>

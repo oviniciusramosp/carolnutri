@@ -9,7 +9,13 @@ const RING_CIRC = 2 * Math.PI * RING_R;
 const wavePath = ageWavePath();
 ---
 
-<section class="joy-patients" aria-labelledby="joy-patients-title">
+<section
+  class="joy-patients"
+  id="joy-patients"
+  data-joy-section
+  data-joy-tone="light"
+  aria-labelledby="joy-patients-title"
+>
   <div class="joy-patients-inner">
   <header class="joy-patients-head" data-reveal>
     <p class="eyebrow">no último ano</p>
@@ -117,14 +123,12 @@ const wavePath = ageWavePath();
         <path
           d="M14 4C14 5.10457 13.1046 6 12 6C10.8954 6 10 5.10457 10 4C10 2.89543 10.8954 2 12 2C13.1046 2 14 2.89543 14 4Z"
           stroke="currentColor"
-          stroke-width="1.5"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
         <path
           d="M10.0002 16V20C10.0002 20.9428 10.0002 21.4142 10.2931 21.7071C10.586 22 11.0574 22 12.0002 22C12.943 22 13.4144 22 13.7073 21.7071C14.0002 21.4142 14.0002 20.9428 14.0002 20V16L14.2603 16.0007C15.8127 16.0005 16.5889 16.0004 16.8927 15.5149C17.1965 15.0295 16.8312 14.3728 16.1007 13.0595L14.3008 9.82358C13.8476 9.00874 12.9628 8.49982 11.9996 8.5C11.0368 8.50018 10.1525 9.00901 9.69941 9.82351L7.89935 13.0595C7.1688 14.3728 6.80353 15.0294 7.10731 15.5149C7.41109 16.0004 8.1873 16.0005 9.73972 16.0007L10.0002 16Z"
           stroke="currentColor"
-          stroke-width="1.5"
           stroke-linejoin="round"
         />
       </svg>
@@ -182,6 +186,11 @@ const wavePath = ageWavePath();
 
 <style>
   .joy-patients {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
     background: var(--color-white);
     color: var(--color-coffee);
     padding: clamp(4.5rem, 10vw, 7.5rem) clamp(1.5rem, 6vw, 5rem) clamp(4rem, 8vw, 6rem);
@@ -394,6 +403,12 @@ const wavePath = ageWavePath();
     color: var(--color-coffee);
   }
 
+  .joy-women-icon path {
+    vector-effect: non-scaling-stroke;
+    /* Inter 300 “0” stem is ~0.065em at this size. */
+    stroke-width: calc(var(--figure-size) * 0.065);
+  }
+
   .joy-women-copy {
     display: flex;
     flex-direction: column;
@@ -424,6 +439,8 @@ const wavePath = ageWavePath();
   }
 
   .joy-card-focus {
+    position: relative;
+    isolation: isolate;
     grid-area: focus;
     display: flex;
     flex-direction: column;
@@ -437,6 +454,21 @@ const wavePath = ageWavePath();
       var(--color-sage) 100%
     );
     color: var(--color-almond);
+  }
+
+  .joy-card-focus::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E");
+  }
+
+  .joy-card-focus > * {
+    position: relative;
+    z-index: 1;
   }
 
   .joy-stat-kicker {
@@ -498,23 +530,6 @@ const wavePath = ageWavePath();
     object-position: 32% 18%;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .joy-patients-head[data-reveal],
-    .joy-bento[data-reveal-group] > * {
-      filter: blur(1.5rem);
-      transition:
-        opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 1.35s cubic-bezier(0.16, 1, 0.3, 1),
-        filter 1.35s cubic-bezier(0.16, 1, 0.3, 1);
-      transition-delay: min(calc(var(--reveal-i, 0) * 140ms), 560ms);
-    }
-
-    .joy-patients-head[data-reveal].is-revealed,
-    .joy-bento[data-reveal-group].is-revealed > * {
-      filter: blur(0);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .joy-ring-value,
     .joy-bento.is-revealed .joy-ring-value {
@@ -530,31 +545,54 @@ const wavePath = ageWavePath();
       grid-template-areas:
         "ring ring"
         "age age"
-        "women focus"
-        "countries countries"
-        "photo photo";
+        "photo women"
+        "photo focus"
+        "countries countries";
     }
 
     .joy-card-photo {
-      min-height: 22rem;
+      min-height: 18rem;
+    }
+
+    .joy-card-women,
+    .joy-card-focus {
+      min-height: 8.5rem;
     }
 
     .joy-card-countries {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .joy-flags {
+      width: 100%;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      gap: 0;
     }
   }
 
   @media (max-width: 32rem) {
-    .joy-bento {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "ring"
-        "age"
-        "women"
-        "focus"
-        "countries"
-        "photo";
+    .joy-card-women {
+      --figure-size: 1.75rem;
+      --label-size: 0.625rem;
+      gap: 0.5rem;
+      padding: 1rem;
+    }
+
+    .joy-card-focus {
+      gap: 0.4rem;
+      padding: 1rem;
+    }
+
+    .joy-stat-headline {
+      font-size: 1rem;
+    }
+
+    .joy-flags img {
+      width: 1.5rem;
+      height: 1.5rem;
     }
   }
 </style>

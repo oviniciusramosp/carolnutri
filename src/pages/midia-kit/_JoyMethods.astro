@@ -1,0 +1,253 @@
+---
+const base = import.meta.env.BASE_URL;
+
+const methods = [
+  {
+    name: 'Anamnese',
+    desc: 'Atendimento humanizado para entender os objetivos, restrições e cuidados que o paciente demanda.',
+    image: {
+      src: 'images/consult',
+      alt: 'Carol Agostini em consulta, conversando pelo notebook',
+      width: 800,
+      height: 1200,
+      objectPosition: '50% 32%',
+    },
+  },
+  {
+    name: 'Antropometria',
+    desc: 'Dobras e circunferências para protocolos mais tradicionais.',
+    image: {
+      src: 'images/assessment',
+      alt: 'Medição de prega cutânea com adipômetro',
+      width: 800,
+      height: 1200,
+      objectPosition: '50% 62%',
+    },
+  },
+  {
+    name: 'Bioimpedância',
+    desc: 'Balanças como Inbody e Technogym são ótimas para uma avaliação menos invasiva.',
+    image: {
+      src: 'images/bioimpedance',
+      alt: 'Paciente em avaliação de bioimpedância em balança com tela corporal',
+      width: 800,
+      height: 1202,
+      objectPosition: '46% 50%',
+    },
+  },
+  {
+    name: 'Análise de Imagem e IA',
+    desc: 'Apps e tecnologias próprias permitem o acompanhamento mesmo a distância.',
+    image: {
+      src: 'images/scan',
+      alt: 'Mão segurando o celular com análise corporal por imagem e IA',
+      width: 800,
+      height: 1000,
+      objectPosition: '50% 50%',
+    },
+  },
+] as const;
+---
+
+<section
+  class="joy-methods"
+  id="joy-methods"
+  data-joy-section
+  data-joy-tone="light"
+  aria-labelledby="joy-methods-title"
+>
+  <div class="joy-methods-inner">
+    <header class="joy-methods-head" data-reveal>
+      <p class="eyebrow">Métodos</p>
+      <h2 id="joy-methods-title" class="section-title">
+        Trabalho com base em <em>ciências e tecnologia.</em>
+      </h2>
+      <p class="joy-methods-lead">
+        Desde métodos tradicionais e manuais, até as tecnologias de ponta. Tudo
+        para oferecer opções para o paciente e garantir que ele saia do
+        consultório confortável e surpreso.
+      </p>
+    </header>
+
+    <div class="joy-methods-track-wrap" data-drag-scroll>
+      <div class="joy-methods-track" data-reveal-group>
+        {methods.map((item) => (
+          <article class="joy-method">
+            <div class="joy-method-media">
+              <picture>
+                <source
+                  type="image/webp"
+                  srcset={`${base}${item.image.src}-400.webp 400w, ${base}${item.image.src}-800.webp 800w`}
+                  sizes="(max-width: 64rem) 16rem, 22vw"
+                />
+                <img
+                  src={`${base}${item.image.src}-800.jpg`}
+                  srcset={`${base}${item.image.src}-400.jpg 400w, ${base}${item.image.src}-800.jpg 800w`}
+                  sizes="(max-width: 64rem) 16rem, 22vw"
+                  alt={item.image.alt}
+                  width={item.image.width}
+                  height={item.image.height}
+                  loading="lazy"
+                  draggable="false"
+                  style={`object-position: ${item.image.objectPosition}`}
+                />
+              </picture>
+            </div>
+            <h3 class="joy-method-name">{item.name}</h3>
+            <p class="joy-method-desc">{item.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .joy-methods {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    background: var(--color-white);
+    color: var(--color-coffee);
+    padding: clamp(4.5rem, 10vw, 7.5rem) clamp(1.5rem, 6vw, 5rem);
+  }
+
+  .joy-methods-inner {
+    max-width: 80rem;
+    width: 100%;
+    min-width: 0;
+    margin-inline: auto;
+  }
+
+  .joy-methods-head {
+    max-width: 38rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .joy-methods-lead {
+    margin: 1.25rem 0 0;
+    font-size: clamp(0.9375rem, 1.3vw, 1.0625rem);
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--color-chocolate);
+    text-wrap: pretty;
+  }
+
+  .joy-methods-track {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.6vw, 1.25rem) 0.75rem;
+  }
+
+  .joy-method {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .joy-method-media {
+    overflow: hidden;
+    border-radius: 1rem;
+    aspect-ratio: 4 / 5;
+    background: var(--color-taupe);
+  }
+
+  .joy-method-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .joy-method-name {
+    margin: 1rem 0 0;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-coffee);
+  }
+
+  .joy-method-desc {
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    font-weight: 300;
+    line-height: 1.55;
+    color: var(--color-chocolate);
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 64rem) {
+    .joy-methods-track-wrap {
+      overflow-x: auto;
+      overflow-y: hidden;
+      min-width: 0;
+      margin-inline: calc(-1 * var(--page-gutter));
+      padding-inline: var(--page-gutter);
+      scrollbar-width: none;
+      cursor: grab;
+      touch-action: pan-x;
+      overscroll-behavior-x: contain;
+      user-select: none;
+    }
+
+    .joy-methods-track-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .joy-methods-track-wrap.is-dragging {
+      cursor: grabbing;
+    }
+
+    .joy-methods-track {
+      display: flex;
+      width: max-content;
+      gap: 0.75rem;
+    }
+
+    .joy-method {
+      flex: 0 0 min(16.25rem, 72vw);
+    }
+  }
+</style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('.joy-methods-track-wrap');
+  const mobile = window.matchMedia('(max-width: 64rem)');
+
+  if (wrap) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    wrap.addEventListener('dragstart', (event) => {
+      event.preventDefault();
+    });
+
+    wrap.addEventListener('pointerdown', (event) => {
+      if (!mobile.matches) return;
+      isDown = true;
+      wrap.classList.add('is-dragging');
+      startX = event.pageX - wrap.offsetLeft;
+      scrollLeft = wrap.scrollLeft;
+      wrap.setPointerCapture(event.pointerId);
+    });
+
+    const stopDrag = () => {
+      isDown = false;
+      wrap.classList.remove('is-dragging');
+    };
+
+    wrap.addEventListener('pointerup', stopDrag);
+    wrap.addEventListener('pointercancel', stopDrag);
+    wrap.addEventListener('pointermove', (event) => {
+      if (!isDown) return;
+      event.preventDefault();
+      wrap.scrollLeft = scrollLeft - (event.pageX - wrap.offsetLeft - startX);
+    });
+  }
+</script>

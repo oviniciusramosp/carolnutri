@@ -29,8 +29,9 @@ export function instagramHref(): string {
   return `https://www.instagram.com/${siteMeta.instagramHandle}/`;
 }
 
-export function ogImageUrl(): string {
-  return `${siteOrigin}/images/og.jpg`;
+export function ogImageUrl(file = 'images/og.jpg'): string {
+  const path = file.startsWith('/') ? file : `/${file}`;
+  return `${siteOrigin}${path}`;
 }
 
 export function jsonLdGraph(

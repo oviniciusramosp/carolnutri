@@ -1,0 +1,215 @@
+---
+const base = import.meta.env.BASE_URL;
+
+const gifts = [
+  {
+    src: 'images/gifts-unboxing',
+    alt: 'Abertura da caixa de presentes com copos medidores',
+    width: 800,
+    height: 1202,
+    position: '50% 22%',
+  },
+  {
+    src: 'images/gifts-bacio',
+    alt: 'Sacola Bacio di Latte com tag Carol Agostini',
+    width: 800,
+    height: 936,
+  },
+  {
+    src: 'images/gifts-letters',
+    alt: 'Caixas de presente com cartas manuscritas para pacientes',
+    width: 800,
+    height: 1066,
+  },
+  {
+    src: 'images/gifts-pacoca',
+    alt: 'Lembrancinha de paçoquita em saquinho de organza',
+    width: 800,
+    height: 1135,
+    position: '50% 58%',
+  },
+  {
+    src: 'images/gifts-essential-kit',
+    alt: 'Kit de suplementos Essential',
+    width: 800,
+    height: 1015,
+  },
+  {
+    src: 'images/gifts-cookie',
+    alt: 'Cookie com selo Carol Agostini e legenda de story',
+    width: 800,
+    height: 970,
+  },
+] as const;
+---
+
+<section
+  class="joy-connect"
+  id="joy-connection"
+  data-joy-section
+  data-joy-tone="light"
+  aria-labelledby="joy-connect-title"
+>
+  <div class="joy-connect-inner">
+    <header class="joy-connect-head" data-reveal>
+      <p class="eyebrow">Conexão</p>
+      <h2 id="joy-connect-title" class="section-title">
+        O <em>relacionamento</em> é o sucesso do plano.
+      </h2>
+      <p class="joy-connect-lead">
+        A construção de um ótimo relacionamento com meus pacientes é chave para
+        que eles sigam o plano nutricional e alcancem seus objetivos. Com
+        frequência eles recebem presentes para comemorar conquistas e datas
+        importantes. Todos saem da primeira consulta com uma caixa e materiais
+        que eles vão usar ao longo dos próximos meses. Meu objetivo é sempre
+        surpreender aqueles que atendem comigo.
+      </p>
+    </header>
+  </div>
+
+  <div class="joy-gifts-wrap" data-drag-scroll>
+    <div class="joy-gifts-track" data-reveal-group>
+      {gifts.map((gift) => (
+        <figure class="joy-gift">
+          <picture>
+            <source
+              type="image/webp"
+              srcset={`${base}${gift.src}-400.webp 400w, ${base}${gift.src}-800.webp 800w`}
+              sizes="16rem"
+            />
+            <img
+              src={`${base}${gift.src}-800.jpg`}
+              srcset={`${base}${gift.src}-400.jpg 400w, ${base}${gift.src}-800.jpg 800w`}
+              sizes="16rem"
+              alt={gift.alt}
+              width={gift.width}
+              height={gift.height}
+              loading="lazy"
+              draggable="false"
+              style={'position' in gift && gift.position ? `object-position: ${gift.position}` : undefined}
+            />
+          </picture>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .joy-connect {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    background: var(--color-white);
+    color: var(--color-coffee);
+    padding-block: clamp(4.5rem, 10vw, 7.5rem);
+  }
+
+  .joy-connect-inner {
+    max-width: 80rem;
+    width: 100%;
+    min-width: 0;
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .joy-connect-head {
+    max-width: 40rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .joy-connect-lead {
+    margin: 1.25rem 0 0;
+    font-size: clamp(0.9375rem, 1.3vw, 1.0625rem);
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--color-chocolate);
+    text-wrap: pretty;
+  }
+
+  .joy-gifts-wrap {
+    display: flex;
+    justify-content: flex-start;
+    justify-content: safe center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 0;
+    padding-inline: var(--page-gutter);
+    scrollbar-width: none;
+    cursor: grab;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+    user-select: none;
+  }
+
+  .joy-gifts-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .joy-gifts-wrap.is-dragging {
+    cursor: grabbing;
+  }
+
+  .joy-gifts-track {
+    display: flex;
+    flex: 0 0 auto;
+    width: max-content;
+    gap: 0.75rem;
+  }
+
+  .joy-gift {
+    margin: 0;
+    flex: 0 0 min(18.75rem, 72vw);
+    overflow: hidden;
+    border-radius: 1rem;
+    aspect-ratio: 4 / 5;
+    background: var(--color-taupe);
+  }
+
+  .joy-gift img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+</style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('.joy-gifts-wrap');
+
+  if (wrap) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    wrap.addEventListener('dragstart', (event) => {
+      event.preventDefault();
+    });
+
+    wrap.addEventListener('pointerdown', (event) => {
+      isDown = true;
+      wrap.classList.add('is-dragging');
+      startX = event.pageX - wrap.offsetLeft;
+      scrollLeft = wrap.scrollLeft;
+      wrap.setPointerCapture(event.pointerId);
+    });
+
+    const stopDrag = () => {
+      isDown = false;
+      wrap.classList.remove('is-dragging');
+    };
+
+    wrap.addEventListener('pointerup', stopDrag);
+    wrap.addEventListener('pointercancel', stopDrag);
+    wrap.addEventListener('pointermove', (event) => {
+      if (!isDown) return;
+      event.preventDefault();
+      wrap.scrollLeft = scrollLeft - (event.pageX - wrap.offsetLeft - startX);
+    });
+  }
+</script>

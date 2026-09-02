@@ -139,6 +139,11 @@ export const partners = [
   { name: 'Moove', src: 'images/partners/moove.svg', width: 1970, height: 1170 },
 ] as const;
 
+export const academyMarks = [
+  { name: 'Moove', src: 'images/partners/moove-wordmark.svg', width: 1970, height: 611 },
+  { name: 'Run', src: 'images/partners/run.svg', width: 1033, height: 611 },
+] as const;
+
 export const contentPosts = [
   { shortcode: 'DcUGlv4oAYH', kind: 'post' },
   { shortcode: 'DaWQohpx70Q', kind: 'reel' },
