@@ -67,8 +67,8 @@ const gifts = [
     </header>
   </div>
 
-  <div class="joy-gifts-wrap" data-drag-scroll>
-    <div class="joy-gifts-track" data-reveal-group>
+  <div class="joy-gifts-wrap" data-drag-scroll data-reveal>
+    <div class="joy-gifts-track">
       {gifts.map((gift) => (
         <figure class="joy-gift">
           <picture>
@@ -132,15 +132,15 @@ const gifts = [
   .joy-gifts-wrap {
     display: flex;
     justify-content: flex-start;
-    justify-content: safe center;
     overflow-x: auto;
     overflow-y: hidden;
+    overflow-y: clip;
     min-width: 0;
     padding-inline: var(--page-gutter);
     scrollbar-width: none;
     cursor: grab;
     touch-action: pan-x;
-    overscroll-behavior-x: contain;
+    overscroll-behavior: contain;
     user-select: none;
   }
 
@@ -155,7 +155,10 @@ const gifts = [
   .joy-gifts-track {
     display: flex;
     flex: 0 0 auto;
+    align-items: stretch;
     width: max-content;
+    max-width: none;
+    margin-inline: auto;
     gap: 0.75rem;
   }
 
@@ -192,6 +195,7 @@ const gifts = [
     });
 
     wrap.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'touch') return;
       isDown = true;
       wrap.classList.add('is-dragging');
       startX = event.pageX - wrap.offsetLeft;
