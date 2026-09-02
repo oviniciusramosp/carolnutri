@@ -135,9 +135,9 @@ export const partners = [
   { name: 'Daniela Leal', src: 'images/partners/daniela-leal.svg', width: 2464, height: 1171 },
   { name: 'Essential', src: 'images/partners/essential.svg', width: 1920, height: 1171 },
   { name: 'Caffeine Army', src: 'images/partners/army.svg', width: 1709, height: 1171 },
-  { name: 'Legítima', src: 'images/partners/legitima.svg', width: 1330, height: 1171 },
   { name: 'Sycl', src: 'images/partners/sycl.svg', width: 1171, height: 1171 },
   { name: 'Moove', src: 'images/partners/moove.svg', width: 1970, height: 1170 },
+  { name: 'Legítima', src: 'images/partners/legitima.svg', width: 1330, height: 1171 },
 ] as const;
 
 export const academyMarks = [
