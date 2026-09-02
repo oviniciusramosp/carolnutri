@@ -92,7 +92,7 @@ const extraDegrees = [
             <li>{partner.name}</li>
           ))}
         </ul>
-        <div class="joy-exp-marquee" aria-hidden="true">
+        <div class="joy-exp-marquee" data-drag-scroll aria-hidden="true">
           <div class="joy-exp-marquee-track">
             {Array.from({ length: marqueeCopies }, () => (
               <div class="joy-exp-marquee-group">
@@ -314,8 +314,10 @@ const extraDegrees = [
     animation: joy-exp-marquee 22s linear infinite;
   }
 
-  .joy-exp-marquee:hover .joy-exp-marquee-track {
-    animation-play-state: paused;
+  @media (hover: hover) and (pointer: fine) {
+    .joy-exp-marquee:hover .joy-exp-marquee-track {
+      animation-play-state: paused;
+    }
   }
 
   .joy-exp-marquee-group {
@@ -420,5 +422,68 @@ const extraDegrees = [
     .joy-exp-pills li::marker {
       color: var(--color-latte);
     }
+
+    .joy-exp-marquee {
+      overflow-x: auto;
+      overflow-y: hidden;
+      cursor: grab;
+      touch-action: pan-x;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
+      user-select: none;
+    }
+
+    .joy-exp-marquee::-webkit-scrollbar {
+      display: none;
+    }
+
+    .joy-exp-marquee.is-dragging {
+      cursor: grabbing;
+    }
+
+    .joy-exp-marquee-track {
+      animation: none;
+    }
+
+    .joy-exp-marquee-group .joy-exp-mark {
+      pointer-events: none;
+    }
   }
 </style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('.joy-exp-marquee');
+  const dragQuery = window.matchMedia('(max-width: 32rem)');
+
+  if (wrap) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    wrap.addEventListener('dragstart', (event) => {
+      event.preventDefault();
+    });
+
+    wrap.addEventListener('pointerdown', (event) => {
+      if (!dragQuery.matches) return;
+      isDown = true;
+      wrap.classList.add('is-dragging');
+      startX = event.pageX - wrap.offsetLeft;
+      scrollLeft = wrap.scrollLeft;
+      wrap.setPointerCapture(event.pointerId);
+    });
+
+    const stopDrag = () => {
+      isDown = false;
+      wrap.classList.remove('is-dragging');
+    };
+
+    wrap.addEventListener('pointerup', stopDrag);
+    wrap.addEventListener('pointercancel', stopDrag);
+    wrap.addEventListener('pointermove', (event) => {
+      if (!isDown || !dragQuery.matches) return;
+      event.preventDefault();
+      wrap.scrollLeft = scrollLeft - (event.pageX - wrap.offsetLeft - startX);
+    });
+  }
+</script>
