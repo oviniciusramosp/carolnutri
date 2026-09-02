@@ -269,6 +269,5 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
 
   const canvas = document.querySelector<HTMLCanvasElement>('.joy-hero-canvas');
   if (canvas) createJoyGradient(canvas);
-  const lenis = startSmoothScroll();
-  if (lenis) startJoySnap(lenis);
+  startJoySnap(startSmoothScroll());
 </script>
