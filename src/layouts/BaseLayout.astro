@@ -3,7 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageMotion from '../components/PageMotion.astro';
-import { goatCounterUrl } from '../lib/analytics';
+import { goatCounterLinkKeys, goatCounterUrl } from '../lib/analytics';
 import { jsonLdGraph, ogImageUrl, siteMeta, siteOrigin } from '../lib/site';
 
 interface Props {
@@ -119,6 +119,19 @@ const structuredData = jsonLdGraph(canonical, {
     </main>
     {footer && <Footer />}
     <PageMotion />
+    <script is:inline define:vars={{ goatCounterLinkKeys }}>
+      window.goatcounter = {
+        path: function (p) {
+          var extra = [];
+          for (var i = 0; i < goatCounterLinkKeys.length; i++) {
+            var v = window.goatcounter.get_query(goatCounterLinkKeys[i]);
+            if (v) extra.push(goatCounterLinkKeys[i] + '=' + v);
+          }
+          var base = (p || '/').split('?')[0];
+          return extra.length ? base + '?' + extra.join('&') : base;
+        },
+      };
+    </script>
     <script is:inline data-goatcounter={goatCounterUrl} async src="https://gc.zgo.at/count.js"></script>
   </body>
 </html>
