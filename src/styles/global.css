@@ -91,6 +91,9 @@
   --page-gutter: clamp(1.5rem, 6vw, 5rem);
   --page-max: 80rem;
   --page-inset: max(var(--page-gutter), calc((100vw - var(--page-max)) / 2));
+  /* Longest snap-nav label (Experiência) + air. */
+  --joy-snap-nav-w: 8.5rem;
+  --joy-nav-clear: max(0rem, calc(var(--joy-snap-nav-w) + var(--page-gutter) - var(--page-inset)));
 }
 
 html {

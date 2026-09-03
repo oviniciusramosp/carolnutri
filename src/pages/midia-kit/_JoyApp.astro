@@ -219,6 +219,7 @@ const shots = [
 
   .joy-app-head .eyebrow {
     margin-bottom: 1rem;
+    white-space: nowrap;
   }
 
   .joy-app-head .section-title {
@@ -308,6 +309,10 @@ const shots = [
     text-align: right;
     text-transform: uppercase;
     cursor: pointer;
+  }
+
+  .joy-app-chip:nth-child(-n+2) {
+    width: min(100%, max(8rem, min(var(--line), calc(100% - var(--joy-nav-clear)))));
   }
 
   .joy-app-chip-label {
@@ -502,16 +507,19 @@ const shots = [
     }
   }
 
-  @media (max-width: 64rem) {
+  /* 70rem = 1120px: orbit labels collide with the snap-nav below this. */
+  @media (max-width: 70rem) {
     .joy-app {
       height: auto;
       min-height: 100svh;
+      justify-content: center;
     }
 
     .joy-app-inner {
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      justify-content: center;
       flex: 1 1 auto;
       min-height: auto;
       height: auto;
@@ -519,6 +527,7 @@ const shots = [
 
     .joy-app-head {
       margin-bottom: 2rem;
+      padding-inline-end: var(--joy-nav-clear);
     }
 
     .joy-app-stage {
@@ -662,9 +671,29 @@ const shots = [
     }
   }
 
+  @media (max-width: 48rem) {
+    .joy-app-head {
+      padding-inline-end: 0;
+    }
+  }
+
   @media (max-width: 32rem) {
     .joy-app-stage {
-      --phone-h: min(28rem, 52svh);
+      --phone-h: min(22rem, 40svh);
+    }
+  }
+
+  @media (max-width: 70rem) and (max-height: 56rem) {
+    .joy-app {
+      padding-block: 3rem;
+    }
+
+    .joy-app-head {
+      margin-bottom: 1.25rem;
+    }
+
+    .joy-app-stage {
+      --phone-h: min(22rem, 40svh);
     }
   }
 </style>
@@ -681,7 +710,7 @@ const shots = [
     const stage = root.querySelector('.joy-app-stage');
     const order = chips.map((chip) => chip.dataset.feature).filter((id): id is string => Boolean(id));
     const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const mobile = window.matchMedia('(max-width: 64rem)');
+    const mobile = window.matchMedia('(max-width: 70rem)');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const beatMs = 4500;
     let pinned = root.dataset.active ?? 'feed';

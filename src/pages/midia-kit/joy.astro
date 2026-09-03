@@ -38,11 +38,9 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
       <div class="joy-lockup">
         <span class="joy-lockup-carol">
           <span class="joy-lockup-carol-mark" role="img" aria-label="Carol Agostini"></span>
-        </span>
-        <div class="joy-lockup-mid">
           <p class="joy-lockup-role">Nutricionista</p>
-          <div class="joy-lockup-rule" aria-hidden="true"></div>
-        </div>
+        </span>
+        <div class="joy-lockup-rule" aria-hidden="true"></div>
         <h1 class="joy-lockup-joy">
           <img src={`${base}images/joy-logo.svg`} alt="Joy" width="899" height="194" />
         </h1>
@@ -129,8 +127,10 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
 
   .joy-lockup-carol {
     flex: 0 0 auto;
-    display: block;
-    line-height: 0;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 1.6vw, 1.25rem);
+    position: relative;
   }
 
   .joy-lockup-carol-mark {
@@ -142,14 +142,6 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
     -webkit-mask: var(--carolMark);
     /* Put the Carol “o” center (y 34.95 of 72) on the lockup axis. */
     transform: translateY(calc(100% * (36 - 34.95) / 72));
-  }
-
-  .joy-lockup-mid {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    gap: clamp(0.5rem, 1.6vw, 1.25rem);
-    min-width: 0;
   }
 
   .joy-lockup-role {
@@ -240,7 +232,7 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .joy-lockup-carol {
+    .joy-lockup-carol-mark {
       animation: joy-focus 1.35s cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
     }
 
@@ -258,6 +250,17 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
 
     .joy-kit {
       animation: joy-fade 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.45s both;
+    }
+  }
+
+  /* 850px: hang NUTRICIONISTA under Carol so the name stays on the Joy axis. */
+  @media (max-width: 53.125rem) {
+    .joy-lockup-role {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-top: calc(var(--carol-h) * 12 / 72);
+      transform: translateX(-50%);
     }
   }
 </style>

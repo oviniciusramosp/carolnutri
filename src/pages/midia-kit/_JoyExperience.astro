@@ -41,12 +41,12 @@ const extraDegrees = [
           <source
             type="image/webp"
             srcset={`${base}images/carol-portrait-800.webp 800w, ${base}images/carol-portrait-1024.webp 1024w`}
-            sizes="(max-width: 64rem) 100vw, 40vw"
+            sizes="(width < 46.5rem) 100vw, (width < 80rem) 45vw, 40vw"
           />
           <img
             src={`${base}images/carol-portrait-1024.jpg`}
             srcset={`${base}images/carol-portrait-800.jpg 800w, ${base}images/carol-portrait-1024.jpg 1024w`}
-            sizes="(max-width: 64rem) 100vw, 40vw"
+            sizes="(width < 46.5rem) 100vw, (width < 80rem) 45vw, 40vw"
             alt="Carol Agostini"
             width="1024"
             height="1536"
@@ -263,7 +263,7 @@ const extraDegrees = [
     color: var(--color-coffee);
   }
 
-  @media (min-width: 32.01rem) {
+  @media (min-width: 80rem) {
     .joy-exp-pills li:nth-child(3n + 1) {
       background: color-mix(in srgb, var(--color-ash) 65%, var(--color-joy-3));
     }
@@ -311,6 +311,7 @@ const extraDegrees = [
     display: flex;
     width: max-content;
     will-change: transform;
+    translate: var(--marquee-drag, 0px) 0;
     animation: joy-exp-marquee 22s linear infinite;
   }
 
@@ -351,7 +352,7 @@ const extraDegrees = [
   }
 
   .joy-exp-mark.is-lg {
-    height: 2.8125rem;
+    height: 2.25rem;
   }
 
   @keyframes joy-exp-marquee {
@@ -365,29 +366,28 @@ const extraDegrees = [
     }
   }
 
-  @media (max-width: 64rem) {
+  /* iPad Mini portrait (744) through just under 1280: photo | degrees, partners below. */
+  @media (width >= 46.5rem) and (width < 80rem) {
     .joy-exp-bento {
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto;
+      grid-template-columns: minmax(16rem, 1.05fr) minmax(0, 1fr);
+      grid-template-rows: auto auto;
       grid-template-areas:
-        "photo photo"
-        "degrees degrees"
+        "photo degrees"
         "partners partners";
       min-height: 0;
     }
-
-    .joy-exp-photo {
-      min-height: 22rem;
-    }
   }
 
-  @media (max-width: 32rem) {
+  /* Below iPad Mini the photo is full-bleed; keep the 1:1 crop so it never goes landscape. */
+  @media (width < 46.5rem) {
     .joy-exp-bento {
       grid-template-columns: 1fr;
+      grid-template-rows: auto;
       grid-template-areas:
         "photo"
         "degrees"
         "partners";
+      min-height: 0;
     }
 
     .joy-exp-photo {
@@ -399,7 +399,10 @@ const extraDegrees = [
       /* 36% of the source (nose) maps to the center of a 1:1 cover crop. */
       object-position: 50% 8%;
     }
+  }
 
+  /* Pills wrap into a one-per-row chip cloud below desktop; use a list instead. */
+  @media (width < 80rem) {
     .joy-exp-pills {
       display: block;
       list-style: disc;
@@ -422,27 +425,18 @@ const extraDegrees = [
     .joy-exp-pills li::marker {
       color: var(--color-latte);
     }
+  }
 
+  @media (max-width: 32rem) {
     .joy-exp-marquee {
-      overflow-x: auto;
-      overflow-y: hidden;
       cursor: grab;
-      touch-action: pan-x;
-      scrollbar-width: none;
-      overscroll-behavior-x: contain;
+      touch-action: pan-y;
       user-select: none;
-    }
-
-    .joy-exp-marquee::-webkit-scrollbar {
-      display: none;
     }
 
     .joy-exp-marquee.is-dragging {
       cursor: grabbing;
-    }
-
-    .joy-exp-marquee-track {
-      animation: none;
+      touch-action: none;
     }
 
     .joy-exp-marquee-group .joy-exp-mark {
@@ -453,12 +447,38 @@ const extraDegrees = [
 
 <script>
   const wrap = document.querySelector<HTMLElement>('.joy-exp-marquee');
+  const track = wrap?.querySelector<HTMLElement>('.joy-exp-marquee-track');
   const dragQuery = window.matchMedia('(max-width: 32rem)');
 
-  if (wrap) {
-    let isDown = false;
+  if (wrap && track) {
+    const slop = 6;
+    let pointer = 0;
+    let dragging = false;
     let startX = 0;
-    let scrollLeft = 0;
+    let startY = 0;
+    let origin = 0;
+    let drag = 0;
+
+    function loopWidth() {
+      const group = wrap.querySelector('.joy-exp-marquee-group');
+      return group instanceof HTMLElement ? group.offsetWidth : 0;
+    }
+
+    function applyDrag(px: number) {
+      const loop = loopWidth();
+      drag = loop > 0 ? ((px % loop) + loop) % loop : px;
+      wrap.style.setProperty('--marquee-drag', `${drag}px`);
+    }
+
+    function pause() {
+      wrap.classList.add('is-dragging');
+      track.style.animationPlayState = 'paused';
+    }
+
+    function resume() {
+      wrap.classList.remove('is-dragging');
+      track.style.animationPlayState = '';
+    }
 
     wrap.addEventListener('dragstart', (event) => {
       event.preventDefault();
@@ -466,24 +486,39 @@ const extraDegrees = [
 
     wrap.addEventListener('pointerdown', (event) => {
       if (!dragQuery.matches) return;
-      isDown = true;
-      wrap.classList.add('is-dragging');
-      startX = event.pageX - wrap.offsetLeft;
-      scrollLeft = wrap.scrollLeft;
-      wrap.setPointerCapture(event.pointerId);
+      pointer = event.pointerId;
+      dragging = false;
+      startX = event.clientX;
+      startY = event.clientY;
+      origin = drag;
     });
 
-    const stopDrag = () => {
-      isDown = false;
-      wrap.classList.remove('is-dragging');
+    wrap.addEventListener('pointermove', (event) => {
+      if (event.pointerId !== pointer || !dragQuery.matches) return;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      if (!dragging) {
+        if (Math.abs(dx) < slop && Math.abs(dy) < slop) return;
+        if (Math.abs(dx) < Math.abs(dy)) {
+          pointer = 0;
+          return;
+        }
+        dragging = true;
+        wrap.setPointerCapture(event.pointerId);
+        pause();
+      }
+      event.preventDefault();
+      applyDrag(origin + dx);
+    });
+
+    const stopDrag = (event: PointerEvent) => {
+      if (event.pointerId !== pointer) return;
+      pointer = 0;
+      if (dragging) resume();
+      dragging = false;
     };
 
     wrap.addEventListener('pointerup', stopDrag);
     wrap.addEventListener('pointercancel', stopDrag);
-    wrap.addEventListener('pointermove', (event) => {
-      if (!isDown || !dragQuery.matches) return;
-      event.preventDefault();
-      wrap.scrollLeft = scrollLeft - (event.pageX - wrap.offsetLeft - startX);
-    });
   }
 </script>
