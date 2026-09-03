@@ -14,12 +14,17 @@ const shots = [
   {
     id: 'feed',
     file: 'app-feed',
-    alt: 'Feed do app com Apple Health, conteúdo e artigos',
+    alt: 'Feed do app com sono, água, calorias, conteúdo e artigos',
   },
   {
     id: 'dieta',
     file: 'app-dieta',
-    alt: 'Jantar com grupos de equivalência e substituições',
+    alt: 'Café da manhã com alimentos, Enjoei e comentário da nutri',
+  },
+  {
+    id: 'enjoei',
+    file: 'app-enjoei',
+    alt: 'Sugestão Enjoei: hambúrguer de patinho com cebola caramelizada',
   },
   {
     id: 'diario',
@@ -29,15 +34,13 @@ const shots = [
   {
     id: 'metas',
     file: 'app-metas',
-    alt: 'Checklist de metas de julho',
+    alt: 'Checklist de metas de agosto',
   },
-] as const;
-
-const substRows = [
-  { name: 'Peito de frango grelhado', measure: '120 g', current: true, on: false },
-  { name: 'Peito de peru', measure: '130 g', current: false, on: false },
-  { name: 'Ovos mexidos', measure: '3 unidades', current: false, on: true },
-  { name: 'Tofu grelhado', measure: '140 g', current: false, on: false },
+  {
+    id: 'ia',
+    file: 'app-ia',
+    alt: 'Cardápio de restaurante com sugestões da IA para o café da manhã',
+  },
 ] as const;
 ---
 
@@ -119,93 +122,6 @@ const substRows = [
                   </picture>
                 </div>
               ))}
-
-
-              {/* ——— Enjoei ——— */}
-              <div
-                class="joy-phone-pane"
-                id="joy-pane-enjoei"
-                data-pane="enjoei"
-                role="tabpanel"
-                aria-labelledby="joy-tab-enjoei"
-                inert
-              >
-                <div class="app-pad app-scroll app-dim">
-                  <div class="app-nav">
-                    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <p class="app-display app-display-sm">Almoço</p>
-                  </div>
-                  <p class="app-eyebrow">Alimentos</p>
-                  <div class="app-card">
-                    <p class="app-date">Proteína · 1 porção</p>
-                    <p class="app-card-title app-strike">Peito de frango grelhado</p>
-                    <p class="app-card-body">120 g</p>
-                    <span class="app-pill-enjoei">Enjoei</span>
-                  </div>
-                  <div class="app-card">
-                    <p class="app-date">Carboidrato · 2 porções</p>
-                    <p class="app-card-title">Arroz branco</p>
-                    <p class="app-card-body">6 colheres de sopa</p>
-                  </div>
-                </div>
-                <div class="app-sheet" aria-hidden="true">
-                  <div class="app-grabber"></div>
-                  <p class="app-sheet-title">Substituições</p>
-                  <p class="app-sheet-sub">1 porção · proteína</p>
-                  <p class="app-eyebrow">Sugestões da Nutri</p>
-                  {substRows.map((row) => (
-                    <div class:list={['app-subst', row.on && 'is-on']}>
-                      <div>
-                        <p class="app-subst-name">{row.name}</p>
-                        <p class="app-subst-measure">{row.measure}{row.current ? ' · atual' : ''}</p>
-                      </div>
-                      {row.on && (
-                        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8.2 6.4 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                      )}
-                    </div>
-                  ))}
-                  <div class="app-sheet-btn">Salvar</div>
-                </div>
-              </div>
-
-              {/* ——— IA ——— */}
-              <div
-                class="joy-phone-pane"
-                id="joy-pane-ia"
-                data-pane="ia"
-                role="tabpanel"
-                aria-labelledby="joy-tab-ia"
-                inert
-              >
-                <div class="app-ia">
-                  <div class="app-ia-glow" aria-hidden="true"></div>
-                  <div class="app-ia-brand">
-                    <svg class="app-spark" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-                      <path d="M12 2.2 13.4 8.6 20 10 13.4 11.4 12 17.8 10.6 11.4 4 10 10.6 8.6Z" fill="currentColor"/>
-                    </svg>
-                    Apple Intelligence
-                  </div>
-                  <div class="app-ia-modes">
-                    <span class="is-on">Restaurante</span>
-                    <span>Mercado</span>
-                  </div>
-                  <div class="app-bubble app-bubble-me">Estou no japonês. O que pede no meu plano?</div>
-                  <div class="app-bubble app-bubble-ai">
-                    <p class="app-card-title">No almoço de hoje</p>
-                    <ul>
-                      <li><strong>Sashimi de salmão</strong> — 2 porções de proteína</li>
-                      <li><strong>Salada de algas</strong> — vegetais livres</li>
-                      <li><strong>Arroz</strong> — o carbo do almoço</li>
-                    </ul>
-                    <p class="app-card-body">Deixa o tempurá. A troca já está no grupo.</p>
-                  </div>
-                  <div class="app-bubble app-bubble-me">E no mercado — enjoei do iogurte grego.</div>
-                  <div class="app-bubble app-bubble-ai">
-                    <p class="app-card-title">Mesmo grupo</p>
-                    <p class="app-card-body">Coalhada, skyr ou kefir. Mesma porção, mesma proteína.</p>
-                  </div>
-                </div>
-              </div>
             </div>
         </div>
         <picture class="joy-phone-frame">
@@ -568,277 +484,6 @@ const substRows = [
     pointer-events: auto;
     filter: blur(0);
     transform: none;
-  }
-
-  /* ——— In-phone UI (Enjoei + IA) ——— */
-  .app-pad {
-    padding: 1.55rem 0.85rem 0.6rem;
-  }
-
-  .app-scroll {
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .app-display {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 1.45rem;
-    line-height: 1.15;
-    color: var(--color-coffee);
-  }
-
-  .app-display-sm {
-    font-size: 1.15rem;
-  }
-
-  .app-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0.55rem 0 0.4rem;
-    font-size: 0.48rem;
-    font-weight: 400;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--color-latte);
-  }
-
-  .app-eyebrow::before {
-    content: "";
-    width: 1.4rem;
-    height: 0.05rem;
-    background: currentColor;
-  }
-
-  .app-card {
-    margin-top: 0.4rem;
-    padding: 0.55rem 0.65rem;
-    border-radius: 0.7rem;
-    background: var(--color-almond);
-    box-shadow: inset 0 0 0 0.0625rem var(--color-white);
-  }
-
-  .app-date {
-    margin: 0;
-    font-size: 0.5rem;
-    color: var(--color-latte);
-  }
-
-  .app-card-title {
-    margin: 0.12rem 0 0;
-    font-size: 0.7rem;
-    font-weight: 500;
-    line-height: 1.25;
-    color: var(--color-coffee);
-  }
-
-  .app-card-body {
-    margin: 0.15rem 0 0;
-    font-size: 0.58rem;
-    font-weight: 300;
-    line-height: 1.4;
-    color: var(--color-chocolate);
-  }
-
-  .app-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: var(--color-chocolate);
-    margin-bottom: 0.5rem;
-  }
-
-  .app-strike {
-    text-decoration: line-through;
-    color: var(--color-latte);
-  }
-
-  .app-pill-enjoei {
-    display: inline-block;
-    margin-top: 0.4rem;
-    padding: 0.18rem 0.5rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--color-mauve) 22%, var(--color-almond));
-    color: var(--color-mauve);
-    font-size: 0.5rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .app-dim {
-    mask-image: linear-gradient(to bottom, rgb(0 0 0) 40%, transparent 88%);
-  }
-
-  .app-sheet {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 0.45rem 0.85rem 1.1rem;
-    border-radius: 1.1rem 1.1rem 0 0;
-    background: var(--color-almond);
-    box-shadow: 0 -0.75rem 2rem color-mix(in srgb, var(--color-ink) 10%, transparent);
-  }
-
-  .app-grabber {
-    width: 2.2rem;
-    height: 0.22rem;
-    margin: 0 auto 0.45rem;
-    border-radius: 999px;
-    background: var(--color-beige);
-  }
-
-  .app-sheet-title {
-    margin: 0;
-    font-size: 0.78rem;
-    font-weight: 500;
-    text-align: center;
-  }
-
-  .app-sheet-sub {
-    margin: 0.15rem 0 0.2rem;
-    font-size: 0.52rem;
-    color: var(--color-latte);
-    text-align: center;
-  }
-
-  .app-subst {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.4rem;
-    padding: 0.38rem 0.55rem;
-    border-radius: 999px;
-    color: var(--color-coffee);
-  }
-
-  .app-subst.is-on {
-    background: var(--color-taupe);
-    color: var(--color-chocolate);
-  }
-
-  .app-subst-name {
-    margin: 0;
-    font-size: 0.64rem;
-    font-weight: 500;
-  }
-
-  .app-subst-measure {
-    margin: 0.05rem 0 0;
-    font-size: 0.5rem;
-    color: var(--color-latte);
-  }
-
-  .app-sheet-btn {
-    margin-top: 0.45rem;
-    padding: 0.5rem;
-    border-radius: 999px;
-    background: var(--color-coffee);
-    color: var(--color-almond);
-    font-size: 0.64rem;
-    font-weight: 500;
-    text-align: center;
-  }
-
-  .app-ia {
-    position: relative;
-    height: 100%;
-    padding: 1.55rem 0.85rem 0.6rem;
-    overflow: hidden;
-  }
-
-  .app-ia-glow {
-    position: absolute;
-    inset: -10% -20% auto;
-    height: 8rem;
-    background: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-joy-2) 28%, transparent),
-      color-mix(in srgb, var(--color-joy-3) 35%, transparent),
-      transparent
-    );
-    pointer-events: none;
-  }
-
-  .app-ia-brand {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-    margin-bottom: 0.45rem;
-    font-size: 0.52rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-joy-2);
-  }
-
-  .app-spark {
-    color: var(--color-joy-2);
-  }
-
-  .app-ia-modes {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    gap: 0.3rem;
-    margin-bottom: 0.7rem;
-  }
-
-  .app-ia-modes span {
-    padding: 0.22rem 0.55rem;
-    border-radius: 999px;
-    font-size: 0.52rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-latte);
-    box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--color-ink) 6%, transparent);
-  }
-
-  .app-ia-modes .is-on {
-    background: var(--color-coffee);
-    color: var(--color-almond);
-    box-shadow: none;
-  }
-
-  .app-bubble {
-    position: relative;
-    max-width: 92%;
-    margin: 0 0 0.4rem;
-    padding: 0.5rem 0.6rem;
-    border-radius: 0.85rem;
-    font-size: 0.6rem;
-    line-height: 1.4;
-  }
-
-  .app-bubble-me {
-    margin-left: auto;
-    background: var(--color-coffee);
-    color: var(--color-almond);
-    border-bottom-right-radius: 0.25rem;
-  }
-
-  .app-bubble-ai {
-    background: var(--color-almond);
-    box-shadow: inset 0 0 0 0.0625rem var(--color-white);
-    border-bottom-left-radius: 0.25rem;
-  }
-
-  .app-bubble-ai ul {
-    margin: 0.3rem 0 0;
-    padding: 0 0 0 0.85rem;
-  }
-
-  .app-bubble-ai li {
-    margin: 0.12rem 0;
-  }
-
-  .app-bubble-ai .app-card-title,
-  .app-bubble-ai .app-card-body {
-    margin-top: 0;
   }
 
   @media (prefers-reduced-motion: no-preference) {
