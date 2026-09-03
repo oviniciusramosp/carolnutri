@@ -4,7 +4,8 @@ export const AGE_WAVE = {
   height: 32,
   mid: 16,
   amp: 6,
-  cycles: 12,
+  /** Keep wavelength in CSS pixels so the wave does not flatten when the card shrinks. */
+  wavelength: 670 / 12,
   stroke: 8,
   stop: 4,
   markStart: 0.08,
@@ -20,8 +21,9 @@ function envelope(local: number) {
   return smoothstep(0, 0.1, local) * (1 - smoothstep(0.9, 1, local));
 }
 
-export function ageWavePath(phase = 0): string {
-  const { width, mid, amp, cycles, markStart, markEnd } = AGE_WAVE;
+export function ageWavePath(phase = 0, renderedWidth = AGE_WAVE.width): string {
+  const { width, mid, amp, wavelength, markStart, markEnd } = AGE_WAVE;
+  const cycles = Math.max(3, renderedWidth / wavelength);
   const steps = 240;
   const points: string[] = [];
   for (let i = 0; i <= steps; i += 1) {

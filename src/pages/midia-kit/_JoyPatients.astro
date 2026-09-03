@@ -147,10 +147,10 @@ const wavePath = ageWavePath();
     </article>
 
     <article class="joy-card joy-card-countries">
-      <p class="joy-stat-label">Pacientes em +7 países</p>
+      <p class="joy-stat-label">Pacientes em <strong>+7 países</strong></p>
       <ul class="joy-flags">
-        {presenceCountries.map((country) => (
-          <li>
+        {presenceCountries.map((country, i) => (
+          <li style={`--flag-i: ${i}`}>
             <img
               src={`${base}images/flags/${country.id}.svg`}
               alt={country.name}
@@ -347,6 +347,12 @@ const wavePath = ageWavePath();
     width: 100%;
     height: 2rem;
     overflow: visible;
+    flex: 0 0 2rem;
+  }
+
+  .joy-age-path {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 0.5rem;
   }
 
   .joy-age-dot {
@@ -438,6 +444,11 @@ const wavePath = ageWavePath();
     text-transform: uppercase;
   }
 
+  .joy-stat-label strong {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
   .joy-card-focus {
     position: relative;
     isolation: isolate;
@@ -509,11 +520,33 @@ const wavePath = ageWavePath();
     list-style: none;
   }
 
+  .joy-flags li {
+    flex: 0 0 auto;
+  }
+
   .joy-flags img {
     display: block;
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 50%;
+  }
+
+  .joy-bento.is-revealed .joy-flags li {
+    animation: joy-flag-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--flag-i, 0) * 90ms + 160ms);
+  }
+
+  @keyframes joy-flag-in {
+    from {
+      opacity: 0;
+      filter: blur(0.5rem);
+      transform: translateY(0.35rem);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: none;
+    }
   }
 
   .joy-card-photo {
@@ -535,6 +568,10 @@ const wavePath = ageWavePath();
     .joy-bento.is-revealed .joy-ring-value {
       stroke-dashoffset: calc(var(--ring-circ) * (1 - var(--ring-pct)));
       transition: none;
+    }
+
+    .joy-bento.is-revealed .joy-flags li {
+      animation: none;
     }
   }
 
@@ -598,20 +635,37 @@ const wavePath = ageWavePath();
 </style>
 
 <script>
-  import { ageWavePath } from '../../lib/joy-age-wave';
+  import { AGE_WAVE, ageWavePath } from '../../lib/joy-age-wave';
 
   const path = document.querySelector('.joy-age-path');
+  const wave = document.querySelector('.joy-age-wave');
   const bento = document.querySelector('.joy-bento');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let renderedWidth = AGE_WAVE.width;
 
-  if (path instanceof SVGPathElement && !reduceMotion.matches) {
-    const started = performance.now();
-    const drift = (now: number) => {
-      const phase = ((now - started) / 8000) * Math.PI * 2;
-      path.setAttribute('d', ageWavePath(phase));
+  function measureWave() {
+    if (!(wave instanceof SVGElement)) return;
+    const next = wave.getBoundingClientRect().width;
+    if (next > 0) renderedWidth = next;
+  }
+
+  measureWave();
+  if (wave instanceof SVGElement && 'ResizeObserver' in window) {
+    new ResizeObserver(measureWave).observe(wave);
+  }
+
+  if (path instanceof SVGPathElement) {
+    if (reduceMotion.matches) {
+      path.setAttribute('d', ageWavePath(0, renderedWidth));
+    } else {
+      const started = performance.now();
+      const drift = (now: number) => {
+        const phase = ((now - started) / 8000) * Math.PI * 2;
+        path.setAttribute('d', ageWavePath(phase, renderedWidth));
+        requestAnimationFrame(drift);
+      };
       requestAnimationFrame(drift);
-    };
-    requestAnimationFrame(drift);
+    }
   }
 
   function easeOutCubic(t: number) {
