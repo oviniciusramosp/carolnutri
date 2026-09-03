@@ -120,15 +120,22 @@ const structuredData = jsonLdGraph(canonical, {
     {footer && <Footer />}
     <PageMotion />
     <script is:inline define:vars={{ goatCounterLinkKeys }}>
+      function goatShareToken() {
+        for (var i = 0; i < goatCounterLinkKeys.length; i++) {
+          var v = window.goatcounter.get_query(goatCounterLinkKeys[i]);
+          if (!v) continue;
+          v = String(v).replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+          if (v) return v.slice(0, 64);
+        }
+      }
       window.goatcounter = {
         path: function (p) {
-          var extra = [];
-          for (var i = 0; i < goatCounterLinkKeys.length; i++) {
-            var v = window.goatcounter.get_query(goatCounterLinkKeys[i]);
-            if (v) extra.push(goatCounterLinkKeys[i] + '=' + v);
-          }
-          var base = (p || '/').split('?')[0];
-          return extra.length ? base + '?' + extra.join('&') : base;
+          var base = (p || '/').split('?')[0].replace(/\/+$/, '') || '';
+          var token = goatShareToken();
+          return token ? base + '/~' + token : (p || '/').split('?')[0];
+        },
+        referrer: function (r) {
+          return goatShareToken() || r;
         },
       };
     </script>

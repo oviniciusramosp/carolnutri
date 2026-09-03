@@ -2,9 +2,9 @@
 export const goatCounterUrl = 'https://nutricarolagostini.goatcounter.com/count';
 
 /**
- * Query keys kept on the tracked path so a shared link
- * (`/midia-kit/joy/?ref=maria`) shows up as its own row.
- * `ref` / `utm_source` / `campaign` also feed GoatCounter campaigns.
+ * Query keys that mark a shared link (`?ref=maria`).
+ * GoatCounter strips `ref` and `utm_*` from paths, so we record
+ * them as `/midia-kit/joy/~maria` instead.
  */
 export const goatCounterLinkKeys = [
   'ref',
