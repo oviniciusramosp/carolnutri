@@ -533,9 +533,9 @@ const wavePath = ageWavePath();
 
   .joy-bento.is-revealed .joy-flags li {
     animation: joy-flag-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-    /* Card reveal is 1.35s after the group stagger; start as that settle ends. */
+    /* Overlap the card's 1.35s ease-out settle — not after it has gone still. */
     animation-delay: calc(
-      min(var(--reveal-i, 0) * 140ms, 560ms) + 1.15s + var(--flag-i, 0) * 90ms
+      min(var(--reveal-i, 0) * 140ms, 560ms) + 0.4s + var(--flag-i, 0) * 90ms
     );
   }
 
