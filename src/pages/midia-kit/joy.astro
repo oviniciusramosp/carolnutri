@@ -110,7 +110,12 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
   }
 
   .joy-lockup {
-    --joy-h: clamp(0.7rem, 3.2vw, 2.35rem);
+    /* From 440px, keep growing from the phone size up to the original 2.35rem cap. */
+    --joy-h: clamp(
+      0.7rem,
+      calc(1.3087rem + (100vw - 27.5rem) * 0.02267),
+      2.35rem
+    );
     /* Match Carol cap height (C 0–55.68 of the 72 crop) to Joy; keep the “o” on the lockup axis. */
     --carol-h: calc(var(--joy-h) * 72 / 55.68);
     position: absolute;
@@ -264,7 +269,7 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
     }
   }
 
-  /* 440px: lockup box is 24px tall at 390px; Joy still matches Carol cap height. */
+  /* Phone: Carol box is 24px at 390px, then scales with width up to 440px. */
   @media (max-width: 27.5rem) {
     .joy-lockup {
       --carol-h: calc(100vw * 24 / 390);
