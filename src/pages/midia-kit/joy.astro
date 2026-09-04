@@ -263,6 +263,14 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
       transform: translateX(-50%);
     }
   }
+
+  /* 440px: lockup box is 24px tall at 390px; Joy still matches Carol cap height. */
+  @media (max-width: 27.5rem) {
+    .joy-lockup {
+      --carol-h: calc(100vw * 24 / 390);
+      --joy-h: calc(var(--carol-h) * 55.68 / 72);
+    }
+  }
 </style>
 
 <script>
