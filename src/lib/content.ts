@@ -138,6 +138,7 @@ export const partners = [
   { name: 'Sycl', src: 'images/partners/sycl.svg', width: 1171, height: 1171 },
   { name: 'Moove', src: 'images/partners/moove.svg', width: 1970, height: 1170 },
   { name: 'Legítima', src: 'images/partners/legitima.svg', width: 1330, height: 1171 },
+  { name: 'Pura Vida', src: 'images/partners/pura-vida.svg', width: 2435, height: 1172 },
 ] as const;
 
 export const academyMarks = [
