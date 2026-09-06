@@ -2,32 +2,41 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const nodes = document.querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-group]');
 
+  function reveal(el: HTMLElement) {
+    el.classList.add('is-revealed');
+    el.classList.remove('is-pending');
+  }
+
   function revealAll() {
-    nodes.forEach((el) => {
-      el.classList.add('is-revealed');
-      el.classList.remove('is-pending');
-    });
+    nodes.forEach(reveal);
   }
 
   if (reduceMotion.matches || !('IntersectionObserver' in window)) {
     revealAll();
   } else {
+    // Hide first, then observe, so the pending → revealed transition actually runs.
+    // Waiting for the first IO callback to add is-pending misses snap/fast scrolls:
+    // the first event is already intersecting, so the node never leaves the default
+    // visible state and just pops in.
+    nodes.forEach((el) => el.classList.add('is-pending'));
+
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          const el = entry.target as HTMLElement;
-          if (entry.isIntersecting) {
-            el.classList.add('is-revealed');
-            el.classList.remove('is-pending');
-            io.unobserve(el);
-          } else {
-            el.classList.add('is-pending');
-          }
+          if (!entry.isIntersecting) continue;
+          reveal(entry.target as HTMLElement);
+          io.unobserve(entry.target);
         }
       },
-      { rootMargin: '0px 0px -12% 0px', threshold: 0.08 },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0 },
     );
-    nodes.forEach((el) => io.observe(el));
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        nodes.forEach((el) => io.observe(el));
+      });
+    });
+
     reduceMotion.addEventListener('change', (event) => {
       if (event.matches) {
         io.disconnect();

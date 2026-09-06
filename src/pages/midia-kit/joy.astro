@@ -26,6 +26,58 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
   themeColor="#5c331d"
 >
   <JoySnapNav />
+  <p class="joy-keys" aria-hidden="true">
+    use as setas do teclado
+    <span class="joy-kbd" aria-hidden="true">
+      <svg viewBox="0 0 67 75" fill="none">
+        <path
+          class="joy-kbd-lip"
+          fill="currentColor"
+          d="M67 63.9886C67 70.0699 62.0696 75.0003 55.9883 75.0003H11.0117C4.93038 75.0003 0 70.0699 0 63.9886V56.0393C0 62.1207 4.93038 67.0511 11.0117 67.0511H55.9883C62.0696 67.0511 67 62.1207 67 56.0393V63.9886Z"
+        >
+          <animate
+            attributeName="d"
+            dur="2.8s"
+            begin="3.5s"
+            repeatCount="indefinite"
+            calcMode="spline"
+            keyTimes="0;0.08;0.14;0.22;0.3;1"
+            keySplines="0.32 0.72 0 1;0.32 0.72 0 1;0.32 0.72 0 1;0.32 0.72 0 1;0.32 0.72 0 1"
+            values="M67 63.9886C67 70.0699 62.0696 75.0003 55.9883 75.0003H11.0117C4.93038 75.0003 0 70.0699 0 63.9886V56.0393C0 62.1207 4.93038 67.0511 11.0117 67.0511H55.9883C62.0696 67.0511 67 62.1207 67 56.0393V63.9886Z;M67 63.9886C67 70.0699 62.0696 75.0003 55.9883 75.0003H11.0117C4.93038 75.0003 0 70.0699 0 63.9886V56.0393C0 62.1207 4.93038 67.0511 11.0117 67.0511H55.9883C62.0696 67.0511 67 62.1207 67 56.0393V63.9886Z;M67 63.9886C67 70.0699 62.0696 75.0003 55.9883 75.0003H11.0117C4.93038 75.0003 0 70.0699 0 63.9886V62.0393C0 68.1207 4.93038 73.0511 11.0117 73.0511H55.9883C62.0696 73.0511 67 68.1207 67 62.0393V63.9886Z;M67 63.9886C67 70.0699 62.0696 75.0003 55.9883 75.0003H11.0117C4.93038 75.0003 0 70.0699 0 63.9886V62.0393C0 68.1207 4.93038 73.0511 11.0117 73.0511H55.9883C62.0696 73.0511 67 68.1207 67 62.0393V63.9886Z;M67 63.9886C67 70.0699 62.0696 75.0003 55.9883 75.0003H11.0117C4.93038 75.0003 0 70.0699 0 63.9886V56.0393C0 62.1207 4.93038 67.0511 11.0117 67.0511H55.9883C62.0696 67.0511 67 62.1207 67 56.0393V63.9886Z;M67 63.9886C67 70.0699 62.0696 75.0003 55.9883 75.0003H11.0117C4.93038 75.0003 0 70.0699 0 63.9886V56.0393C0 62.1207 4.93038 67.0511 11.0117 67.0511H55.9883C62.0696 67.0511 67 62.1207 67 56.0393V63.9886Z"
+          ></animate>
+        </path>
+        <g class="joy-kbd-face">
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            dur="2.8s"
+            begin="3.5s"
+            repeatCount="indefinite"
+            calcMode="spline"
+            keyTimes="0;0.08;0.14;0.22;0.3;1"
+            keySplines="0.32 0.72 0 1;0.32 0.72 0 1;0.32 0.72 0 1;0.32 0.72 0 1;0.32 0.72 0 1"
+            values="0 0;0 0;0 6;0 6;0 0;0 0"
+          ></animateTransform>
+          <rect
+            x="1.00139"
+            y="1.00102"
+            width="64.9975"
+            height="65.049"
+            rx="10.0102"
+            stroke="currentColor"
+            stroke-width="2.5"
+          ></rect>
+          <path
+            d="M22.5 28.5l11 12 11-12"
+            stroke="currentColor"
+            stroke-width="3.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+        </g>
+      </svg>
+    </span>
+  </p>
   <section
     class="joy-hero"
     id="joy-hero"
@@ -181,6 +233,46 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
     width: auto;
   }
 
+  .joy-keys {
+    --joy-kbd-size: 1.5rem;
+    position: fixed;
+    left: 50%;
+    bottom: calc(clamp(1.25rem, 4vw, 2.5rem) + env(safe-area-inset-bottom, 0px));
+    z-index: 5;
+    display: none;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    color: var(--color-coffee);
+    font-family: var(--font-sans);
+    font-size: clamp(0.625rem, 1vw, 0.75rem);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    opacity: 0;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  .joy-keys.is-in {
+    opacity: 0.7;
+  }
+
+  .joy-kbd {
+    flex: 0 0 auto;
+    width: var(--joy-kbd-size);
+    height: calc(var(--joy-kbd-size) * 75 / 67);
+    overflow: visible;
+  }
+
+  .joy-kbd svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
   .joy-kit {
     position: absolute;
     right: var(--page-gutter);
@@ -256,6 +348,16 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
     .joy-kit {
       animation: joy-fade 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.45s both;
     }
+
+    .joy-keys {
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .joy-keys {
+      display: inline-flex;
+    }
   }
 
   /* 850px: hang NUTRICIONISTA under Carol so the name stays on the Joy axis. */
@@ -279,11 +381,46 @@ const carolMark = `url("${base}images/logo-left.svg") top / 100% auto no-repeat`
 </style>
 
 <script>
+  import type Lenis from 'lenis';
   import { createJoyGradient } from '../../lib/joy-gradient';
   import { startJoySnap } from '../../lib/joy-snap';
   import { startSmoothScroll } from '../../lib/smooth-scroll';
 
   const canvas = document.querySelector<HTMLCanvasElement>('.joy-hero-canvas');
   if (canvas) createJoyGradient(canvas);
-  startJoySnap(startSmoothScroll());
+  const lenis = startSmoothScroll();
+  startJoySnap(lenis);
+  startJoyKeysHint(lenis);
+
+  function startJoyKeysHint(scroll?: Lenis) {
+    const keys = document.querySelector<HTMLElement>('.joy-keys');
+    const hero = document.getElementById('joy-hero');
+    if (!keys || !hero) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches) {
+      keys.querySelectorAll('animate, animateTransform').forEach((node) => node.remove());
+    }
+    const desktop = window.matchMedia('(min-width: 48rem)');
+    let ready = false;
+
+    const sync = () => {
+      const y = scroll ? scroll.scroll : window.scrollY;
+      const on = desktop.matches && ready && y < hero.offsetHeight * 0.28;
+      keys.classList.toggle('is-in', on);
+      keys.setAttribute('aria-hidden', on ? 'false' : 'true');
+    };
+
+    const arm = () => {
+      ready = true;
+      sync();
+    };
+
+    if (reduce.matches) arm();
+    else window.setTimeout(arm, 2550);
+
+    if (scroll) scroll.on('scroll', sync);
+    else window.addEventListener('scroll', sync, { passive: true });
+    desktop.addEventListener('change', sync);
+  }
 </script>
