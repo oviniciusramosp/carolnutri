@@ -8,9 +8,13 @@ export default defineConfig({
   base: '/',
   output: 'static',
   trailingSlash: 'always',
+  redirects: {
+    '/midia-kit/joy/': '/media-kit/joy/',
+    '/midia-kit/joy-og/': '/media-kit/joy-og/',
+  },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/midia-kit/'),
+      filter: (page) => !page.includes('/media-kit/'),
     }),
   ],
   vite: {
