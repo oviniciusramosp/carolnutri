@@ -1,0 +1,24 @@
+---
+import { dashboardUrl } from '../lib/site';
+
+export const prerender = true;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="refresh" content={`0;url=${dashboardUrl}`} />
+    <link rel="canonical" href={dashboardUrl} />
+    <title>Abrindo o dashboard…</title>
+    <script is:inline define:vars={{ dashboardUrl }}>
+      location.replace(dashboardUrl);
+    </script>
+  </head>
+  <body>
+    <p>Abrindo o painel da Carol.</p>
+    <p>Se não abrir, <a href={dashboardUrl}>clique aqui</a>. Este aparelho precisa estar no Tailscale.</p>
+  </body>
+</html>

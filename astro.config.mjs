@@ -14,7 +14,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/media-kit/'),
+      filter: (page) => !page.includes('/media-kit/') && !page.includes('/dashboard'),
     }),
   ],
   vite: {

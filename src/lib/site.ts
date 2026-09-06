@@ -1,5 +1,8 @@
 export const siteOrigin = 'https://nutricarolagostini.com';
 
+/** Carol's Next dashboard on the Mini (Tailscale Serve). Needs Tailscale on the device. */
+export const dashboardUrl = 'https://mac-mini-de-vinicius.tail969dc0.ts.net:8445/';
+
 export const siteMeta = {
   name: 'Carol Nutri',
   professionalName: 'Carol Agostini',
